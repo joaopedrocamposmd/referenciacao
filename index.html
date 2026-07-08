@@ -1,0 +1,183 @@
+<!DOCTYPE html><html lang="pt" data-theme="light"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Referenciação Ortopedia — ULSM</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b877b'/%3E%3Cpath d='M28 30 V50 C28 75 40 82 50 82 C60 82 72 75 72 50 V30' stroke='white' stroke-width='12' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='30' r='8' fill='white'/%3E%3Ccircle cx='50' cy='82' r='8' fill='white'/%3E%3Ccircle cx='72' cy='30' r='8' fill='white'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../ubnic-brand-kit/lib/ubnic.css">
+<style>
+  .wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:24px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+  .brand{display:inline-flex;align-items:center;gap:10px;line-height:0}
+  .brand svg{height:30px;width:auto}
+  h1{font-family:var(--font-sans);font-size:20px;color:var(--t1);margin:0 0 4px}
+  .subtitle{font-size:13px;color:var(--t3);margin:0 0 16px}
+  /* #orto-nav envolve as colunas → é o pai alto da nav sticky; a nav vai para o topo via order:-1 */
+  #orto-nav{display:flex;flex-direction:column}
+  #orto-nav > .u-stack-nav{order:-1}
+  .cols{display:block}
+  @media(min-width:1000px){
+    .cols{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;align-items:start}
+    #orto-collect{max-width:840px;margin-inline:auto}
+    .u-stack-nav.u-bleed{padding-right:calc(380px + 28px + 16px)}
+    /* a nav do stack é sticky (top:0, ~52px de altura) → o painel cola-se ABAIXO dela */
+    #orto-report{position:sticky;top:68px;max-height:calc(100vh - 84px);overflow-y:auto}
+  }
+  /* região anatómica em linhas: MS / MI / coluna / infantil / prótese·neoformação
+     (a ordem das opções vem de ORTO.regioes; nth-child com grid-column-start:1 abre linha nova) */
+  [data-fid="regiao"] .u-radio.u-btns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  [data-fid="regiao"] .u-radio.u-btns > .u-opt:nth-child(7),
+  [data-fid="regiao"] .u-radio.u-btns > .u-opt:nth-child(8),
+  [data-fid="regiao"] .u-radio.u-btns > .u-opt:nth-child(9){grid-column-start:1}
+  @media(max-width:560px){
+    [data-fid="regiao"] .u-radio.u-btns{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  /* destaque dos cards de patologia cuja faixa etária típica inclui a idade do doente */
+  .u-opt.orto-age-match{border-color:var(--teal);background:var(--teal-bg)}
+  /* pulse quando um campo aparece (ex.: duração após escolher tratamento) */
+  @keyframes orto-pulse{0%{box-shadow:0 0 0 0 rgba(59,135,123,.35)}100%{box-shadow:0 0 0 10px rgba(59,135,123,0)}}
+  .orto-pulse{animation:orto-pulse .6s ease-out 2;border-radius:12px}
+  /* painel de resultado */
+  #orto-report{display:flex;flex-direction:column;gap:12px}
+  #orto-report .u-alert{margin:0}
+  #orto-texto{background:var(--s1);border:1px solid var(--bdr);border-radius:12px;padding:14px;
+    font-family:var(--font-mono);font-size:12px;line-height:1.55;color:var(--t1);
+    white-space:pre-wrap;word-break:break-word;margin:0}
+</style>
+</head><body class="u-root">
+<div class="u-bg"><div class="u-orb a"></div><div class="u-orb b"></div><div class="u-orb c"></div></div>
+<div class="u-grid"></div>
+<div class="wrap">
+  <div class="topbar">
+    <a class="brand" href="https://ubnic.com" target="_blank" rel="noopener" aria-label="UBNIC">
+      <svg viewBox="0 0 320 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M28 30 V50 C28 75 40 82 50 82 C60 82 72 75 72 50 V30" stroke="var(--teal)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="28" cy="30" r="7" fill="var(--teal)" stroke="var(--bg)" stroke-width="2.5"/>
+        <circle cx="50" cy="82" r="7" fill="var(--teal)" stroke="var(--bg)" stroke-width="2.5"/>
+        <circle cx="72" cy="30" r="7" fill="var(--teal)" stroke="var(--bg)" stroke-width="2.5"/>
+        <text x="95" y="68" font-family="'Inter',sans-serif" font-weight="700" font-size="42" letter-spacing="-1" fill="var(--t1)">UBNIC</text>
+      </svg>
+    </a>
+    <button class="u-theme-toggle" data-theme-toggle aria-label="Alternar tema"></button>
+  </div>
+  <h1>Referenciação Ortopedia — ULSM</h1>
+  <p class="subtitle">Critérios e prioridades conforme o Documento de Trabalho Ortopedia ↔ CSP. Ferramenta de apoio — a decisão clínica é do médico.</p>
+  <div id="orto-nav">
+    <div class="cols">
+      <div id="orto-collect"><noscript>Esta aplicação precisa de JavaScript.</noscript></div>
+      <aside id="orto-report"></aside>
+    </div>
+  </div>
+</div>
+<script src="../ubnic-brand-kit/lib/ubnic.js" defer></script>
+<script src="ortopedia.schema.js" defer></script>
+<script src="ortopedia.engine.js" defer></script>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  if (!window.UBNIC || !window.ORTO || !window.OrtoEngine) {
+    document.getElementById('orto-collect').innerHTML =
+      '<div class="u-alert warn">A biblioteca UBNIC não foi encontrada — a pasta <b>ubnic-brand-kit</b> tem de estar ao lado da pasta desta aplicação (…/UBNIC/ubnic-brand-kit/lib/).</div>';
+    return;
+  }
+  var stack = UBNIC.stack('#orto-collect', {
+    name: 'orto',
+    modules: ORTO.buildModules(),
+    nav: true, navTarget: '#orto-nav', navFullBleed: true,
+    boxedFields: true, markFindings: true, autoAdvance: true,
+    applyDefaults: true,
+  });
+  var panel = document.getElementById('orto-report');
+
+  function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+  // ao escolher a região: se só há 1 patologia (ou só 1 compatível com a idade), seleciona-a.
+  // clique programático no card (não setState): segue o caminho normal de eventos da lib,
+  // por isso o estado recomputa do DOM e o autoAdvance salta sozinho para o campo seguinte.
+  function autoSelectPat(s) {
+    if (!s.regiao || s['pat_' + s.regiao]) return false;
+    var daRegiao = ORTO.patologias.filter(function (p) { return p.regiao === s.regiao; });
+    var cands = daRegiao;
+    if (daRegiao.length > 1 && s.idade != null && s.idade !== '') {
+      var m = daRegiao.filter(function (p) { return ORTO.faixaMatch(p, s.idade); });
+      if (m.length === 1) cands = m;
+    }
+    if (cands.length !== 1) return false;
+    var inp = document.querySelector('[data-fid="pat_' + s.regiao + '"] input[value="' + cands[0].id + '"]');
+    if (!inp || inp.checked) return false;
+    setTimeout(function () { inp.click(); }, 0); // fora do dispatch atual (evita afterChange re-entrante)
+    return true;
+  }
+
+  // destaca os cards de patologia cuja faixa etária típica inclui a idade do doente
+  function marcarFaixaEtaria(s) {
+    if (!s.regiao) return;
+    var root = document.querySelector('[data-fid="pat_' + s.regiao + '"]');
+    if (!root) return;
+    root.querySelectorAll('.u-opt').forEach(function (lab) {
+      var inp = lab.querySelector('input');
+      var p = inp && ORTO.patologias.find(function (x) { return x.id === inp.value; });
+      lab.classList.toggle('orto-age-match', !!p && ORTO.faixaMatch(p, s.idade));
+    });
+  }
+
+  // pulse quando a "duração do tratamento conservador" aparece (após escolher ≥1 tratamento)
+  var tratdurVisivel = false;
+  function pulseTratdur() {
+    var root = document.querySelector('[data-fid="tratdur"]');
+    var vis = !!root && !root.hasAttribute('hidden');
+    if (vis && !tratdurVisivel) {
+      root.classList.remove('orto-pulse'); void root.offsetWidth; // reinicia a animação
+      root.classList.add('orto-pulse');
+    }
+    tratdurVisivel = vis;
+  }
+
+  function render(e) {
+    var s = stack.getState();
+    var mudou = e && e.detail ? e.detail.changed : null;
+    // auto-seleção só em resposta ao clique na região (evita disparos a meio de escrever a idade)
+    if (mudou === 'regiao' && autoSelectPat(s)) return; // o setState dispara novo u:stack → re-render
+    marcarFaixaEtaria(s);
+    pulseTratdur();
+    var pat = ORTO.pat(s);
+    var dec = OrtoEngine.decide(s, pat);
+    var n = OrtoEngine.NIVEL[dec.nivel];
+    var out = OrtoEngine.buildText(s, pat, dec, ORTO);
+    var h = '';
+    // conteúdo num único filho: .u-alert é flex, e <b>+texto soltos viravam 2 colunas
+    h += '<div class="u-alert ' + n.alert + '"><div><b>' + esc(n.label) + '</b>' +
+         (dec.motivo ? '<br>' + esc(dec.motivo) : '') + '</div></div>';
+    if (dec.falta && dec.falta.length)
+      h += '<div class="u-alert info"><div><b>Em falta para referenciação NORMAL:</b><br>· ' + dec.falta.map(esc).join('<br>· ') + '</div></div>';
+    (dec.avisos || []).forEach(function (a) { h += '<div class="u-alert info">' + esc(a) + '</div>'; });
+    if (out.texto) {
+      h += '<pre class="u-mono" id="orto-texto">' + esc(out.texto) + '</pre>';
+      h += '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+           '<button class="u-btn u-btn-copy" data-copy="#orto-texto">Copiar texto</button>' +
+           '<button class="u-btn u-btn-secondary" data-orto-reset>Recomeçar</button></div>';
+    } else {
+      h += '<p style="color:var(--t3);font-size:13px;margin:0">Escolha a região e a patologia para gerar o texto.</p>';
+    }
+    panel.innerHTML = h;
+  }
+
+  // Recomeçar — confirmação em 2 passos (destrutivo)
+  panel.addEventListener('click', function (e) {
+    var rs = e.target.closest('[data-orto-reset]');
+    if (!rs) return;
+    if (rs.dataset.armed === '1') { stack.reset(); return; }
+    rs.dataset.armed = '1';
+    rs.classList.remove('u-btn-secondary'); rs.classList.add('u-btn-danger');
+    rs.textContent = 'Apagar tudo?';
+    setTimeout(function () {
+      if (!rs.isConnected) return;
+      rs.dataset.armed = '0';
+      rs.classList.remove('u-btn-danger'); rs.classList.add('u-btn-secondary');
+      rs.textContent = 'Recomeçar';
+    }, 3500);
+  });
+
+  stack.getEl().addEventListener('u:stack', render);
+  render();
+});
+</script>
+</body></html>
