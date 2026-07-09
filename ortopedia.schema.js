@@ -6,13 +6,14 @@
 
 const ORTO = {
   // ordem = layout em linhas anatómicas (ver grelha CSS do campo região no HTML):
-  // MS (ombro·cotovelo·punho/mão) / MI (anca·joelho·pé/tornozelo) / coluna / infantil / prótese·neoformação
+  // MS (ombro·cotovelo·punho/mão) / MI (anca·joelho·pé/tornozelo) / coluna / infantil
+  // "Doente com prótese" e "Neoformação" NÃO são regiões: são patologias transversais,
+  // sempre as 2 últimas opções dentro de cada região.
   regioes: [
     { id:'ombro', label:'Ombro' }, { id:'cotovelo', label:'Cotovelo' }, { id:'punho_mao', label:'Punho e Mão' },
     { id:'anca', label:'Anca' }, { id:'joelho', label:'Joelho' }, { id:'pe_tornozelo', label:'Pé e Tornozelo' },
     { id:'coluna', label:'Coluna' },
     { id:'infantil', label:'Ortopedia Infantil' },
-    { id:'protese', label:'Doente com prótese' }, { id:'neoformacao', label:'Neoformação' },
   ],
 
   comorbilidades: {
@@ -451,8 +452,8 @@ const ORTO = {
     idade:{min:50,max:120},
     notas:['Referenciar sempre como muito prioritário.'] },
 
-  /* ============ DOENTE COM PRÓTESE ============ */
-  { id:'dor_protese', regiao:'protese', nome:'Dor em doente com prótese', lado:true,
+  /* ============ DOENTE COM PRÓTESE (transversal: última opção em todas as regiões) ============ */
+  { id:'dor_protese', transversal:true, nome:'Dor em doente com prótese', lado:true,
     cardDesc:'Documentar tempo de vida da prótese e complicações; caracterização da dor; trauma; sinais inflamatórios; mobilidades vs prévias.',
     doenteTipo:[
       {value:'trauma',label:'Existência de trauma'},
@@ -472,8 +473,8 @@ const ORTO = {
     idade:null,
     notas:['Seguimento: pelo Ortopedista até 1 ano pós-operatório; depois, seguimento radiológico e clínico anual pelo médico assistente nos CSP até aos 5 anos; posteriormente a cada 3 anos.'] },
 
-  /* ============ NEOFORMAÇÃO ============ */
-  { id:'neoformacao', regiao:'neoformacao', nome:'Neoformação', lado:true,
+  /* ============ NEOFORMAÇÃO (transversal: última opção em todas as regiões) ============ */
+  { id:'neoformacao', transversal:true, nome:'Neoformação', lado:true,
     cardDesc:'Documentar aspeto morfológico, ritmo de crescimento e sintomatologia associada (dor, limitação da mobilidade).',
     doenteTipo:[
       {value:'dor',label:'Dor associada'},
@@ -762,12 +763,15 @@ ORTO.pat = function (s) { const id = ORTO.patId(s); return ORTO.patologias.find(
 /* ---------- módulos do u-stack ---------- */
 ORTO.buildModules = function () {
   const P = ORTO.patologias;
+  // transversais (dor em prótese, neoformação): sempre as 2 últimas opções de todas as regiões
+  const transversais = [P.find(p => p.id === 'dor_protese'), P.find(p => p.id === 'neoformacao')];
   const patCards = ORTO.regioes.map(r => ({
     id:'pat_' + r.id, label:'Patologia — ' + r.label, type:'single', density:'cards',
     showIf: s => s.regiao === r.id,
-    // cards ordenados por faixa etária típica (mais jovem → mais idoso)
+    // cards ordenados por faixa etária típica (mais jovem → mais idoso) + transversais no fim
     options: P.filter(p => p.regiao === r.id)
       .slice().sort((a, b) => (a.faixa.min - b.faixa.min) || (a.faixa.max - b.faixa.max))
+      .concat(transversais)
       .map(p => ({ value:p.id, label:p.nome, desc:p.cardDesc })),
   }));
   const per = (p, sfx, def) => Object.assign({ id:sfx + '_' + p.id, showIf: s => ORTO.patId(s) === p.id }, def);

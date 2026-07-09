@@ -7,7 +7,7 @@ const E = require('./ortopedia.engine.js');
 const ids = new Set();
 ORTO.patologias.forEach(p => {
   assert(!ids.has(p.id), 'id duplicado: ' + p.id); ids.add(p.id);
-  assert(ORTO.regioes.some(r => r.id === p.regiao), p.id + ': região inválida');
+  assert(p.transversal === true || ORTO.regioes.some(r => r.id === p.regiao), p.id + ': região inválida');
   ['nome','cardDesc','doenteTipo','prioridade','mcdt','tratamento','normalGate'].forEach(k =>
     assert(p[k] !== undefined, p.id + ' sem ' + k));
   assert(['padrao','criterios','sempre','mfr'].includes(p.normalGate), p.id + ': normalGate inválido');
@@ -34,7 +34,8 @@ assert(!ORTO.faixaMatch(ORTO.patologias.find(p => p.id === 'omartrose'), null), 
 
 const st = (patId, extra) => {
   const p = ORTO.patologias.find(x => x.id === patId);
-  return Object.assign({ regiao:p.regiao, ['pat_' + p.regiao]:patId, idade:55, sexo:'m' }, extra);
+  const reg = p.regiao || 'joelho';   // transversais (prótese/neoformação) escolhem-se dentro de uma região qualquer
+  return Object.assign({ regiao:reg, ['pat_' + reg]:patId, idade:55, sexo:'m' }, extra);
 };
 const pat = id => ORTO.patologias.find(x => x.id === id);
 
@@ -73,7 +74,8 @@ assert(/direito/i.test(txt.texto.toLowerCase()), 'texto sem lado');
 // 13. sem critérios → texto de registo clínico com plano
 const s13 = st('coifa', { tratdur:'lt3' });
 const t13 = E.buildText(s13, pat('coifa'), E.decide(s13, pat('coifa')), ORTO);
-assert(/REGISTO/i.test(t13.titulo), 'devia ser registo clínico');
+assert.equal(t13.titulo, 'OMBRO', '1.ª linha deve ser a região');
+assert(/AVALIAÇÃO: sem critérios/.test(t13.texto), 'devia ser registo clínico (secção AVALIAÇÃO)');
 assert(/PLANO/i.test(t13.texto), 'registo sem plano conservador');
 // 14. gate criterios: dismetria só com chip >1,5 cm
 assert.equal(E.decide(st('dismetria', {}), pat('dismetria')).nivel, 'sem_criterios');
@@ -88,7 +90,8 @@ assert.equal(E.decide(st('dor_protese', { tratdur:'m3_6', crit_normal:['avd'] })
 // 17b. MFR → título de referenciação a MFR
 const s17b = st('capsulite', {});
 const t17b = E.buildText(s17b, pat('capsulite'), E.decide(s17b, pat('capsulite')), ORTO);
-assert(/REFERENCIAÇÃO A MFR/.test(t17b.titulo), 'título MFR errado: ' + t17b.titulo);
+assert.equal(t17b.titulo, 'OMBRO', '1.ª linha deve ser a região (também no MFR)');
+assert(/ORIENTAÇÃO: Iniciar fisioterapia urgente/.test(t17b.texto), 'texto MFR sem orientação');
 // 17. onset em texto: duração 4 meses
 const s17 = st('coifa', { prio_coifa:['rutura_traum'], evol_mode:'duration', evol_dur:4, evol_unit:'months' });
 assert(/há 4 meses/.test(E.buildText(s17, pat('coifa'), E.decide(s17, pat('coifa')), ORTO).texto), 'evolução em falta no texto');
@@ -135,5 +138,19 @@ assert(!/MCDT em falta/.test(E.buildText(s22, pat('tend_calc'), d22, ORTO).texto
 // …mas nos restantes níveis continua a aparecer
 const s22b = st('coifa', { prio_coifa:['rutura_traum'] });
 assert(/MCDT em falta/.test(E.buildText(s22b, pat('coifa'), E.decide(s22b, pat('coifa')), ORTO).texto), 'MP15 deve manter MCDT em falta');
+
+// 23. transversais: últimas 2 opções de TODAS as regiões; 1.ª linha do texto = região escolhida
+const mods = ORTO.buildModules();
+const patFields = mods.find(m => m.id === 'patologia').fields;
+ORTO.regioes.forEach(r => {
+  const f = patFields.find(x => x.id === 'pat_' + r.id);
+  assert(f, 'sem campo de patologia para ' + r.id);
+  const vals = f.options.map(o => o.value);
+  assert.deepEqual(vals.slice(-2), ['dor_protese', 'neoformacao'], r.id + ': transversais não são as 2 últimas');
+});
+const s23 = { regiao:'joelho', pat_joelho:'neoformacao', idade:70 };
+const t23 = E.buildText(s23, pat('neoformacao'), E.decide(s23, pat('neoformacao')), ORTO);
+assert.equal(t23.titulo, 'JOELHO', 'neoformação escolhida no joelho → 1.ª linha JOELHO');
+assert(/MOTIVO: Neoformação/.test(t23.texto), 'motivo deve manter a patologia');
 
 console.log('OK — todos os testes passaram');

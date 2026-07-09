@@ -96,9 +96,9 @@ function buildText(state, pat, dec, ORTO) {
   const evol = evolTxt(state);
 
   const L = [];
-  L.push(registo ? 'REGISTO CLÍNICO — ' + pat.nome.toUpperCase()
-       : dec.nivel === 'mfr' ? 'REFERENCIAÇÃO A MFR — ' + pat.nome.toUpperCase()
-       : 'REFERENCIAÇÃO A ORTOPEDIA — ' + pat.nome.toUpperCase());
+  // 1.ª linha = região (tipologia de consulta da aplicação interna), não a patologia
+  const reg = (ORTO.regioes.find(r => r.id === state.regiao) || {}).label;
+  L.push((reg || pat.nome).toUpperCase());
   L.push('');
   const motivo = [pat.nome,
     pat.lado && state.lado ? 'lado ' + LADO[state.lado] : null,

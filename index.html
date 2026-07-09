@@ -29,12 +29,13 @@
       text-transform:uppercase;letter-spacing:.8px;color:var(--teal);margin-bottom:2px}
     .orto-footer{margin-top:0;padding:16px 4px 0;border-top:1px solid var(--bdr)}
   }
-  /* região anatómica em linhas: MS / MI / coluna / infantil / prótese·neoformação
+  /* região anatómica em linhas: MS / MI / coluna / infantil
      (a ordem das opções vem de ORTO.regioes; nth-child com grid-column-start:1 abre linha nova) */
   [data-fid="regiao"] .u-radio.u-btns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
   [data-fid="regiao"] .u-radio.u-btns > .u-opt:nth-child(7),
-  [data-fid="regiao"] .u-radio.u-btns > .u-opt:nth-child(8),
-  [data-fid="regiao"] .u-radio.u-btns > .u-opt:nth-child(9){grid-column-start:1}
+  [data-fid="regiao"] .u-radio.u-btns > .u-opt:nth-child(8){grid-column-start:1}
+  /* transversais (dor em prótese, neoformação) destacam-se ligeiramente das patologias da região */
+  [data-fid^="pat_"] .u-opt:has(input[value="dor_protese"]){margin-top:14px}
   @media(max-width:560px){
     [data-fid="regiao"] .u-radio.u-btns{grid-template-columns:repeat(2,minmax(0,1fr))}
   }
@@ -118,20 +119,15 @@ window.addEventListener('DOMContentLoaded', function () {
 
   function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
 
-  // ao escolher a região: se só há 1 patologia (ou só 1 compatível com a idade), seleciona-a.
-  // clique programático no card (não setState): segue o caminho normal de eventos da lib,
-  // por isso o estado recomputa do DOM e o autoAdvance salta sozinho para o campo seguinte.
+  // ao escolher a região: auto-seleciona a patologia APENAS se for a única dessa região —
+  // nunca por faixa etária (um doente de 70 anos no joelho também pode ter uma torção).
+  // clique programático no card (não setState): segue o caminho normal de eventos da lib.
   function autoSelectPat(s) {
     if (!s.regiao || s['pat_' + s.regiao]) return false;
-    var daRegiao = ORTO.patologias.filter(function (p) { return p.regiao === s.regiao; });
-    var cands = daRegiao;
-    if (daRegiao.length > 1 && s.idade != null && s.idade !== '') {
-      var m = daRegiao.filter(function (p) { return ORTO.faixaMatch(p, s.idade); });
-      if (m.length === 1) cands = m;
-    }
-    if (cands.length !== 1) return false;
-    var inp = document.querySelector('[data-fid="pat_' + s.regiao + '"] input[value="' + cands[0].id + '"]');
-    if (!inp || inp.checked) return false;
+    var inputs = document.querySelectorAll('[data-fid="pat_' + s.regiao + '"] input');
+    if (inputs.length !== 1) return false;
+    if (inputs[0].checked) return false;
+    var inp = inputs[0];
     setTimeout(function () { inp.click(); }, 0); // fora do dispatch atual (evita afterChange re-entrante)
     return true;
   }
