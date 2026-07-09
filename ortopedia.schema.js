@@ -40,11 +40,11 @@ const ORTO = {
   { id:'coifa', regiao:'ombro', nome:'Rutura da coifa', lado:true,
     cardDesc:'Meia-idade com omalgia crónica (ou aguda se trauma) referida ao deltoide; padrão inflamatório (noite ++).',
     doenteTipo:[
-      {value:'omalgia_deltoide',label:'Omalgia referida ao deltoide'},
-      {value:'inflamatorio',label:'Padrão inflamatório (noite ++)'},
-      {value:'mob_completa',label:'Mobilidade passiva e ativa completas'} ],
+      {value:'omalgia_deltoide',label:'Omalgia referida ao deltoide',desc:'Dor na face lateral do braço, raramente irradiando abaixo do cotovelo.'},
+      {value:'inflamatorio',label:'Padrão inflamatório (noite ++)',desc:'Agrava à noite e em repouso; interfere com o sono.'},
+      {value:'mob_completa',label:'Mobilidade passiva e ativa completas',desc:'Amplitudes passivas mantidas distinguem de capsulite e de omartrose.'} ],
     prioridade:[
-      {value:'rutura_traum',label:'Suspeita de rutura traumática aguda da coifa',nivel:'mp15'},
+      {value:'rutura_traum',label:'Suspeita de rutura traumática aguda da coifa',nivel:'mp15',desc:'Trauma recente com perda funcional aguda (ex.: incapacidade de elevação ativa/pseudoparalisia).'},
       {value:'jovem_desp',label:'Jovem desportista após tratamento conservador',nivel:'p60'} ],
     normalGate:'padrao', minConservadorMeses:6,
     mcdt:[ {value:'rx_ombro',label:'Raio-X face e perfil do ombro (normal ou artropatia da coifa)'},
@@ -56,11 +56,11 @@ const ORTO = {
   { id:'tend_calc', regiao:'ombro', nome:'Tendinite calcificante', lado:true,
     cardDesc:'Adulto jovem com omalgia referida ao deltoide; padrão inflamatório (noite ++).',
     doenteTipo:[
-      {value:'omalgia_deltoide',label:'Omalgia referida ao deltoide'},
-      {value:'inflamatorio',label:'Padrão inflamatório (noite ++)'},
-      {value:'mob_completa',label:'Mobilidade passiva e ativa completas'} ],
+      {value:'omalgia_deltoide',label:'Omalgia referida ao deltoide',desc:'Dor na face lateral do braço, raramente irradiando abaixo do cotovelo.'},
+      {value:'inflamatorio',label:'Padrão inflamatório (noite ++)',desc:'Agrava à noite e em repouso; interfere com o sono.'},
+      {value:'mob_completa',label:'Mobilidade passiva e ativa completas',desc:'Amplitudes passivas mantidas distinguem de capsulite e de omartrose.'} ],
     prioridade:[
-      {value:'hiperalgica',label:'Fase hiperálgica de reabsorção com até uma semana de evolução (para infiltração subacromial)',nivel:'su'} ],
+      {value:'hiperalgica',label:'Fase hiperálgica de reabsorção com até uma semana de evolução (para infiltração subacromial)',nivel:'su',desc:'Dor súbita e incapacitante — corresponde à fase de reabsorção do depósito cálcico.'} ],
     normalGate:'mfr', minConservadorMeses:0,
     mcdt:[ {value:'rx_ombro',label:'Raio-X face e perfil do ombro (calcificações)'},
            {value:'eco_ombro',label:'Ecografia articular (calcificações +/- tendinose)'} ],
@@ -72,7 +72,7 @@ const ORTO = {
     cardDesc:'Idoso com omalgia crónica; padrão mecânico (aumenta com a atividade); crepitação; rigidez.',
     doenteTipo:[
       {value:'omalgia_cronica',label:'Omalgia crónica'},
-      {value:'mecanico',label:'Padrão mecânico (aumenta com a atividade)'},
+      {value:'mecanico',label:'Padrão mecânico (aumenta com a atividade)',desc:'Agrava com o uso e alivia com o repouso.'},
       {value:'crepitacao',label:'Crepitação'},
       {value:'rigidez',label:'Mobilidade passiva e ativa limitadas (rigidez)'} ],
     prioridade:[],
@@ -99,10 +99,10 @@ const ORTO = {
   { id:'instabilidade_ombro', regiao:'ombro', nome:'Instabilidade', lado:true,
     cardDesc:'Jovem desportista; episódios de luxação ou sensação de instabilidade durante exercício; mobilidade habitualmente normal.',
     doenteTipo:[
-      {value:'luxacoes',label:'Episódios de luxação ou sensação de instabilidade durante exercício'},
+      {value:'luxacoes',label:'Episódios de luxação ou sensação de instabilidade durante exercício',desc:'Apreensão com o braço em abdução/rotação externa é típica.'},
       {value:'mob_normal',label:'Mobilidade passiva e ativa habitualmente normais'} ],
     prioridade:[
-      {value:'lux_aguda',label:'Luxação aguda pós-traumática',nivel:'su'},
+      {value:'lux_aguda',label:'Luxação aguda pós-traumática',nivel:'su',desc:'Reduzir com urgência; exige Raio-X pré e pós-redução.'},
       {value:'jovem_desp',label:'Jovem desportista após tratamento conservador',nivel:'p60'} ],
     normalGate:'padrao', minConservadorMeses:3,
     mcdt:[ {value:'rx_ombro',label:'Raio-X face e perfil do ombro (podem estar presentes lesões Hill-Sachs e Bankart ósseo)'} ],
@@ -156,7 +156,7 @@ const ORTO = {
     cardDesc:'Dor mecânica na base do polegar; Grind e Shear test positivos; deformidade, por vezes polegar em Z; perda de força de preensão e pinça.',
     doenteTipo:[
       {value:'dor_base_polegar',label:'Dor de carácter mecânico na base do polegar'},
-      {value:'grind_shear',label:'Grind e Shear test positivos'},
+      {value:'grind_shear',label:'Grind e Shear test positivos',desc:'Dor à compressão axial e rotação da base do polegar (trapézio-metacárpica).'},
       {value:'deform_z',label:'Deformidade na base do polegar, por vezes polegar em Z'},
       {value:'perda_forca',label:'Perda de força de preensão e pinça'} ],
     prioridade:[],
@@ -171,7 +171,7 @@ const ORTO = {
     cardDesc:'Dor na face dorso-radial do punho, possível tumefação; dor aumenta com desvio cubital (Finkelstein positivo).',
     doenteTipo:[
       {value:'dor_dorsoradial',label:'Dor na face dorso-radial do punho, possível tumefação dorso-radial'},
-      {value:'finkelstein',label:'Dor aumenta com desvio cubital (Teste de Finkelstein positivo)'} ],
+      {value:'finkelstein',label:'Dor aumenta com desvio cubital (Teste de Finkelstein positivo)',desc:'Polegar fechado na palma + desvio cubital do punho reproduz a dor.'} ],
     prioridade:[
       {value:'jovem_desp',label:'Jovem desportista após tratamento conservador',nivel:'p60'} ],
     normalGate:'padrao', minConservadorMeses:6,
@@ -186,9 +186,9 @@ const ORTO = {
   { id:'canal_carpico', regiao:'punho_mao', nome:'Síndrome do canal cárpico / Neuropatias', lado:true,
     cardDesc:'Parestesias e dor no território do mediano, noturnas e matinais; perda de força progressiva; Phalen, Durkan e Tinel positivos.',
     doenteTipo:[
-      {value:'parestesias',label:'Parestesias e dor na mão em território do nervo mediano, sobretudo noturnas (acordam o doente) e matinais'},
+      {value:'parestesias',label:'Parestesias e dor na mão em território do nervo mediano, sobretudo noturnas (acordam o doente) e matinais',desc:'Poupam tipicamente o 5.º dedo.'},
       {value:'perda_forca',label:'Perda de força progressiva'},
-      {value:'phalen',label:'Phalen, Durkan e Tinel positivos'} ],
+      {value:'phalen',label:'Phalen, Durkan e Tinel positivos',desc:'Phalen: flexão máxima dos punhos 60 s; Durkan: compressão do canal 30 s; Tinel: percussão sobre o mediano.'} ],
     prioridade:[],
     normalGate:'padrao', minConservadorMeses:3,
     mcdt:[ {value:'emg',label:'EMG'} ],
@@ -214,7 +214,7 @@ const ORTO = {
   { id:'coxalgia_jovem', regiao:'anca', nome:'Coxalgia no adulto jovem', lado:true,
     cardDesc:'Coxalgia mecânica inguinal durante atividade desportiva (FABER/FADIR+); ressalto, crepitação ou bloqueio.',
     doenteTipo:[
-      {value:'coxalgia_desp',label:'Coxalgia mecânica inguinal durante atividade desportiva, principalmente com flexão da anca (FABER ou FADIR positivos)'},
+      {value:'coxalgia_desp',label:'Coxalgia mecânica inguinal durante atividade desportiva, principalmente com flexão da anca (FABER ou FADIR positivos)',desc:'FABER: flexão-abdução-rotação externa; FADIR: flexão-adução-rotação interna — dor inguinal sugere conflito femoroacetabular/lesão do labrum.'},
       {value:'ressalto',label:'Sensação de ressalto, crepitação ou bloqueio'},
       {value:'dor_glutea',label:'Dor glútea ou trocantérica por alteração do padrão de marcha'},
       {value:'mob_normal',label:'Mobilidade passiva e ativa habitualmente normais'} ],
@@ -230,7 +230,7 @@ const ORTO = {
     doenteTipo:[
       {value:'dor_mecanica',label:'Dor de carácter mecânico ou misto referida ao joelho, edema induzido pela atividade'},
       {value:'limitacao',label:'Limitação funcional com redução das distâncias de marcha'},
-      {value:'bloqueio',label:'Sensação de bloqueio, instabilidade ou corpo estranho'},
+      {value:'bloqueio',label:'Sensação de bloqueio, instabilidade ou corpo estranho',desc:'Bloqueio verdadeiro (extensão impedida) sugere lesão meniscal ou corpo livre.'},
       {value:'mob_limitada',label:'Limitação das mobilidades passiva e ativa'},
       {value:'deform_axial',label:'Deformidade axial do membro inferior'} ],
     prioridade:[
@@ -240,7 +240,7 @@ const ORTO = {
            {value:'rx_extralongo',label:'Raio-X extra-longo dos membros inferiores em carga'} ],
     tratamento:[ {value:'analg',label:'Controlo da dor (AINEs, paracetamol, tramadol)'},
                  {value:'fisio_baixo',label:'Fisioterapia; exercícios de baixo impacto/hidroterapia'},
-                 {value:'perda_ponderal',label:'Perda ponderal se IMC > 25'} ],
+                 {value:'perda_ponderal',label:'Perda ponderal se IMC > 25',visivel:s=>s.imc==null||s.imc>25} ],
     idade:null,
     notas:['Tendinite da pata de ganso, síndrome de dor anterior do joelho e quisto de Baker têm tratamento essencialmente conservador, com aporte residual pela especialidade de Ortopedia.'] },
 
@@ -252,14 +252,14 @@ const ORTO = {
       {value:'mob_limitada',label:'Limitação das mobilidades passiva e ativa'},
       {value:'deform_axial',label:'Deformidade axial do membro inferior'} ],
     prioridade:[
-      {value:'derrame_bloqueio',label:'Torção aguda com derrame articular imediato ou bloqueio do joelho',nivel:'su'},
+      {value:'derrame_bloqueio',label:'Torção aguda com derrame articular imediato ou bloqueio do joelho',nivel:'su',desc:'Derrame nas primeiras 2 horas sugere hemartrose — lesão do LCA, luxação da rótula ou fratura osteocondral.'},
       {value:'lesao_aguda_jovem',label:'Lesão aguda pós-traumática em doente jovem/desportista',nivel:'p60'} ],
     normalGate:'padrao', minConservadorMeses:3,
     mcdt:[ {value:'rx_joelhos',label:'Raio-X dos joelhos — AP em carga + Schuss + perfil + axial das rótulas'},
            {value:'rx_extralongo',label:'Raio-X extra-longo dos membros inferiores em carga'} ],
     tratamento:[ {value:'analg',label:'Controlo da dor (AINEs, paracetamol, tramadol)'},
                  {value:'fisio_baixo',label:'Fisioterapia; exercícios de baixo impacto/hidroterapia'},
-                 {value:'perda_ponderal',label:'Perda ponderal se IMC > 25'} ],
+                 {value:'perda_ponderal',label:'Perda ponderal se IMC > 25',visivel:s=>s.imc==null||s.imc>25} ],
     idade:null, notas:[] },
 
   /* ============ PÉ E TORNOZELO ============ */
@@ -354,7 +354,7 @@ const ORTO = {
     doenteTipo:[
       {value:'entorses_rep',label:'Entorses de repetição'},
       {value:'dor_6m',label:'Dor persistente mais de 6 meses após entorse'},
-      {value:'instabilidade',label:'Sensação de instabilidade recorrente'} ],
+      {value:'instabilidade',label:'Sensação de instabilidade recorrente',desc:'Falseios de repetição, sobretudo em piso irregular.'} ],
     prioridade:[
       {value:'jovem_desp',label:'Jovem desportista após tratamento conservador',nivel:'p60'} ],
     normalGate:'padrao', minConservadorMeses:3,
@@ -401,11 +401,11 @@ const ORTO = {
     doenteTipo:[
       {value:'cervicalgia',label:'Cervicalgia (dor occipital/trapézio) com/sem irradiação unilateral/bilateral e/ou parestesias (dermátomo)'},
       {value:'defice_forca',label:'Défice de força / perda de motricidade fina dos MS'},
-      {value:'primeiro_neuronio',label:'Sinais do 1.º neurónio'},
+      {value:'primeiro_neuronio',label:'Sinais do 1.º neurónio',desc:'Hiperreflexia, clónus, Babinski/Hoffmann; na cervical, perda de destreza fina das mãos.'},
       {value:'alt_marcha',label:'Alterações do padrão da marcha'} ],
     prioridade:[
-      {value:'defice_neuro',label:'Défice neurológico',nivel:'su'},
-      {value:'duvida_defice',label:'Dúvida se défice neurológico / alteração do padrão da marcha',nivel:'mp15'},
+      {value:'defice_neuro',label:'Défice neurológico',nivel:'su',desc:'Perda objetiva de força, alteração de esfíncteres ou anestesia em sela — enviar de imediato ao SU.'},
+      {value:'duvida_defice',label:'Dúvida se défice neurológico / alteração do padrão da marcha',nivel:'mp15',desc:'Exame não conclusivo mas suspeito — não aguardar agravamento.'},
       {value:'progressiva',label:'Queixas de evolução progressiva no último mês',nivel:'p60'} ],
     normalGate:'padrao', minConservadorMeses:6,
     mcdt:[ {value:'rx_cervical',label:'Raio-X coluna cervical (face, perfil, estudo dinâmico — hiperflexão/hiperextensão)'},
@@ -419,13 +419,13 @@ const ORTO = {
     cardDesc:'Lombalgia com/sem irradiação e/ou parestesias (dermátomo); claudicação neurogénica.',
     doenteTipo:[
       {value:'lombalgia',label:'Lombalgia com/sem irradiação unilateral/bilateral e/ou parestesias (dermátomo)'},
-      {value:'claudicacao',label:'Claudicação neurogénica'},
+      {value:'claudicacao',label:'Claudicação neurogénica',desc:'Dor/parestesias nas pernas ao andar, aliviadas ao sentar ou com flexão anterior (ao contrário da vascular).'},
       {value:'defice_forca',label:'Défice de força / sinais do 1.º neurónio'},
       {value:'alt_marcha',label:'Alterações do padrão da marcha'},
       {value:'genito_urinarias',label:'Alterações genito-urinárias'} ],
     prioridade:[
-      {value:'defice_neuro',label:'Défice neurológico',nivel:'su'},
-      {value:'duvida_defice',label:'Dúvida se défice neurológico / alteração do padrão da marcha',nivel:'mp15'},
+      {value:'defice_neuro',label:'Défice neurológico',nivel:'su',desc:'Perda objetiva de força, alteração de esfíncteres ou anestesia em sela — enviar de imediato ao SU.'},
+      {value:'duvida_defice',label:'Dúvida se défice neurológico / alteração do padrão da marcha',nivel:'mp15',desc:'Exame não conclusivo mas suspeito — não aguardar agravamento.'},
       {value:'progressiva',label:'Queixas de evolução progressiva no último mês',nivel:'p60'} ],
     normalGate:'padrao', minConservadorMeses:6,
     mcdt:[ {value:'rx_lombar',label:'Raio-X coluna lombar (face, perfil, estudo dinâmico — hiperflexão/hiperextensão)'},
@@ -440,11 +440,11 @@ const ORTO = {
     doenteTipo:[
       {value:'dor_axial',label:'Dor axial, história de trauma (minor/major) ou início espontâneo'},
       {value:'defice_forca',label:'Défice de força / perda de motricidade fina dos MS'},
-      {value:'primeiro_neuronio',label:'Sinais do 1.º neurónio'},
+      {value:'primeiro_neuronio',label:'Sinais do 1.º neurónio',desc:'Hiperreflexia, clónus, Babinski/Hoffmann; na cervical, perda de destreza fina das mãos.'},
       {value:'alt_marcha',label:'Alterações do padrão da marcha'},
       {value:'genito_urinarias',label:'Alterações genito-urinárias'} ],
     prioridade:[
-      {value:'defice_trauma',label:'Défice neurológico ou existência de trauma recente',nivel:'su'} ],
+      {value:'defice_trauma',label:'Défice neurológico ou existência de trauma recente',nivel:'su',desc:'Défice objetivo ou fratura em contexto traumático agudo — enviar ao SU.'} ],
     normalGate:'sempre', nivelSempre:'mp15', minConservadorMeses:3,
     mcdt:[ {value:'rx_segmento',label:'Raio-X da coluna, segmento afetado, em carga (face e perfil)'},
            {value:'tac_segmento',label:'TAC do segmento afetado'} ],
@@ -457,14 +457,14 @@ const ORTO = {
     cardDesc:'Documentar tempo de vida da prótese e complicações; caracterização da dor; trauma; sinais inflamatórios; mobilidades vs prévias.',
     doenteTipo:[
       {value:'trauma',label:'Existência de trauma'},
-      {value:'sinais_infl',label:'Existência de sinais inflamatórios'},
+      {value:'sinais_infl',label:'Existência de sinais inflamatórios',desc:'Rubor, calor, tumefação ou fístula — considerar infeção periprotésica.'},
       {value:'perda_mob',label:'Mobilidade passiva/ativa diminuída face às mobilidades prévias'} ],
     detalhes:[
       {id:'tempo_protese',label:'Tempo de vida da prótese e complicações',placeholder:'ex.: PTA há 8 anos, sem intercorrências até agora'},
       {id:'caract_dor',label:'Caracterização da dor',placeholder:'ex.: dor inguinal mecânica, em carga, desde há 2 meses'} ],
     prioridade:[
-      {value:'susp_lux',label:'Suspeita de luxação/fratura/infeção de prótese',nivel:'su'},
-      {value:'lux_recorrente',label:'Luxação recorrente',nivel:'mp15'},
+      {value:'susp_lux',label:'Suspeita de luxação/fratura/infeção de prótese',nivel:'su',desc:'Dor aguda com impotência funcional, membro encurtado/mal posicionado, ou febre e sinais inflamatórios.'},
+      {value:'lux_recorrente',label:'Luxação recorrente',nivel:'mp15',desc:'Dois ou mais episódios de luxação da mesma prótese.'},
       {value:'evol_prog',label:'Queixas de evolução progressiva (perda de mobilidade/capacidade da marcha)',nivel:'p60'} ],
     normalGate:'padrao', requerMotivacao:false, minConservadorMeses:3,
     mcdt:[ {value:'rx_protese',label:'Raio-X face e perfil da anca (linhas de radiolucência progressivas, subsidência de componentes, osteólise)'} ],
@@ -483,7 +483,7 @@ const ORTO = {
       {id:'morfologia',label:'Aspeto morfológico da lesão',placeholder:'ex.: nódulo duro e aderente, ~2 cm, face dorsal do punho'},
       {id:'crescimento',label:'Ritmo de crescimento',placeholder:'ex.: estável há 2 anos / crescimento rápido no último mês'} ],
     prioridade:[
-      {value:'susp_malig',label:'Características suspeitas de malignidade',nivel:'mp15'},
+      {value:'susp_malig',label:'Características suspeitas de malignidade',nivel:'mp15',desc:'Crescimento rápido, dimensão > 5 cm, localização profunda à fáscia, dor em repouso, recidiva local.'},
       {value:'rutura_iminente',label:'Risco de rutura iminente ou com solução de continuidade; doente aceita e está motivado para tratamento cirúrgico',nivel:'p60'} ],
     normalGate:'sempre', minConservadorMeses:0,
     mcdt:[ {value:'rx_mao_punho',label:'Raio-X face e perfil da mão/punho'},
@@ -510,8 +510,8 @@ const ORTO = {
     cardDesc:'Fatores de risco (AF, apresentação pélvica); Barlow/Ortolani, limitação da abdução; Galeazzi; Trendelenburg.',
     doenteTipo:[
       {value:'fr',label:'Fatores de risco (antecedentes familiares, apresentação pélvica, deformidades posicionais)'},
-      {value:'barlow',label:'Barlow/Ortolani positivos ou limitação da abdução da anca (< 3 meses)'},
-      {value:'galeazzi',label:'Limitação da abdução da anca e discrepância de comprimento dos membros — Galeazzi (> 3 meses)'},
+      {value:'barlow',label:'Barlow/Ortolani positivos ou limitação da abdução da anca (< 3 meses)',desc:'Barlow provoca a luxação (adução + pressão posterior); Ortolani redu-la (abdução + elevação) — "clunk".'},
+      {value:'galeazzi',label:'Limitação da abdução da anca e discrepância de comprimento dos membros — Galeazzi (> 3 meses)',desc:'Galeazzi: joelhos a alturas diferentes, com ancas e joelhos fletidos.'},
       {value:'trend',label:'Trendelenburg, obliquidade pélvica, lordose lombar (> 1 ano)'} ],
     detalhes:[
       {id:'perinatal',label:'Patologia associada / parto e gravidez',placeholder:'ex.: apresentação pélvica, AF de displasia'} ],
@@ -528,7 +528,7 @@ const ORTO = {
     doenteTipo:[
       {value:'perfil',label:'Sexo masculino, obeso, início da adolescência'},
       {value:'coxalgia',label:'Coxalgia ou dor referida ao joelho'},
-      {value:'marcha_re',label:'Marcha claudicante com membro em rotação externa; sinal de Drehmann'} ],
+      {value:'marcha_re',label:'Marcha claudicante com membro em rotação externa; sinal de Drehmann',desc:'Drehmann: rotação externa obrigatória da anca durante a flexão passiva.'} ],
     detalhes:[
       {id:'perinatal',label:'Patologia associada / parto e gravidez / duração das queixas',placeholder:'ex.: sem antecedentes; coxalgia há 3 semanas'} ],
     prioridade:[],
@@ -543,7 +543,7 @@ const ORTO = {
     doenteTipo:[
       {value:'perfil',label:'Adolescente, sexo feminino, curva torácica direita'},
       {value:'assimetria',label:'Assimetria de ombros e/ou cintura, proeminência de uma omoplata, giba torácica/lombar, desvio do tronco em relação à pelve'},
-      {value:'adams',label:'Teste de Adams positivo'} ],
+      {value:'adams',label:'Teste de Adams positivo',desc:'Flexão anterior do tronco revela giba costal/lombar (assimetria rotacional).'} ],
     detalhes:[
       {id:'pat_assoc',label:'Patologia associada / evolução da deformidade',placeholder:'ex.: sem patologia associada; giba notada há 6 meses, a aumentar'} ],
     prioridade:[
@@ -560,9 +560,9 @@ const ORTO = {
     detalhes:[
       {id:'pat_assoc',label:'Patologia associada / evolução da deformidade',placeholder:'ex.: valgo bilateral notado aos 4 anos, sem correção desde então'} ],
     prioridade:[
-      {value:'unilateral',label:'Varo/valgo unilateral ou assimétrico, independentemente da idade',nivel:'p60'},
-      {value:'valgo8',label:'Valgo > 8-10º (AFT) ou DIM > 8-10 cm, progressivo/sem sinais de correção, em > 7 anos',nivel:'normal'},
-      {value:'varo3',label:'Varo em criança com idade > 3 anos',nivel:'normal'} ],
+      {value:'unilateral',label:'Varo/valgo unilateral ou assimétrico, independentemente da idade',nivel:'p60',desc:'Assimetria sugere causa patológica (Blount, displasia, sequela fisária), não variante fisiológica.'},
+      {value:'valgo8',label:'Valgo > 8-10º (AFT) ou DIM > 8-10 cm, progressivo/sem sinais de correção, em > 7 anos',nivel:'normal',visivel:s=>s.idade==null||s.idade===''||+s.idade>=7},
+      {value:'varo3',label:'Varo em criança com idade > 3 anos',nivel:'normal',visivel:s=>s.idade==null||s.idade===''||+s.idade>=3} ],
     normalGate:'criterios', minConservadorMeses:0,
     mcdt:[ {value:'rx_extralongo_mi',label:'Raio-X extralongo dos membros inferiores'} ],
     tratamento:[],
@@ -587,14 +587,14 @@ const ORTO = {
   { id:'desvios_torsionais', regiao:'infantil', nome:'Desvios torsionais dos membros inferiores', lado:false,
     cardDesc:'In-toing (pés para dentro) ou out-toing (pés para fora).',
     doenteTipo:[
-      {value:'intoing',label:'In-toing (pés para dentro)'},
+      {value:'intoing',label:'In-toing (pés para dentro)',desc:'Causas típicas por idade: metatarso aduto (bebé), torção tibial (2-4 anos), anteversão femoral (4-8 anos).'},
       {value:'outtoing',label:'Out-toing (pés para fora)'} ],
     detalhes:[
       {id:'pat_assoc',label:'Patologia associada / evolução da deformidade',placeholder:'ex.: in-toing bilateral desde o início da marcha, sem quedas'} ],
     prioridade:[
       {value:'unilateral',label:'Desvio unilateral',nivel:'normal'},
       {value:'bilateral_prog',label:'Desvio bilateral progressivo',nivel:'normal'},
-      {value:'persistente',label:'Persistência após os 8-10 anos com impacto funcional significativo',nivel:'normal'} ],
+      {value:'persistente',label:'Persistência após os 8-10 anos com impacto funcional significativo',nivel:'normal',visivel:s=>s.idade==null||s.idade===''||+s.idade>=8} ],
     normalGate:'criterios', minConservadorMeses:0,
     mcdt:[ {value:'rx_extralongo_mi',label:'Raio-X extralongo dos membros inferiores'} ],
     tratamento:[],
@@ -613,7 +613,7 @@ const ORTO = {
       {id:'pat_assoc',label:'Patologia associada / evolução da deformidade',placeholder:'ex.: pé plano flexível desde sempre, dor após desporto no último ano'} ],
     prioridade:[
       {value:'rigido',label:'Pé plano-valgo rígido ou unilateral',nivel:'normal'},
-      {value:'flex_sint',label:'Pé plano-valgo flexível persistente e sintomático após os 8-10 anos',nivel:'normal'} ],
+      {value:'flex_sint',label:'Pé plano-valgo flexível persistente e sintomático após os 8-10 anos',nivel:'normal',visivel:s=>s.idade==null||s.idade===''||+s.idade>=8} ],
     normalGate:'criterios', minConservadorMeses:0,
     mcdt:[ {value:'rx_pes_obliquo',label:'Raio-X face e perfil dos pés em carga + Raio-X oblíquo dos pés'} ],
     tratamento:[],
@@ -786,7 +786,7 @@ ORTO.buildModules = function () {
     }));
     if (p.prioridade.length) quadro.push(per(p, 'prio', { label:'Critérios de prioridade', type:'multi',
       // tone = prioridade que o critério desencadeia: SU/MP15 → vermelho, P60 → âmbar, NORMAL → verde
-      options:p.prioridade.map(c => ({ value:c.value, label:c.label, finding:true,
+      options:p.prioridade.map(c => ({ value:c.value, label:c.label, desc:c.desc, visivel:c.visivel, finding:true,
         tone:{ su:'critical', mp15:'critical', p60:'warn', normal:'ok' }[c.nivel] })) }));
     if (p.mcdt.length) mcdt.push(per(p, 'mcdt', { label:'MCDT realizados', type:'multi', options:p.mcdt }));
     if (p.tratamento.length) trat.push(per(p, 'trat', { label:'Tratamento efetuado', type:'multi', options:p.tratamento }));

@@ -17,6 +17,8 @@ const NIVEL = {
 };
 
 function minRank(meses) { return meses >= 6 ? 3 : meses >= 3 ? 2 : 0; }
+// opção com 'visivel' (ex.: perda ponderal só se IMC>25; critérios etários) — invisível não conta nem aparece
+function optVisivel(o, state) { return !o || typeof o.visivel !== 'function' || !!o.visivel(state); }
 
 function decide(state, pat) {
   if (!pat) return { nivel:'incompleto', motivo:'Escolha a região e a patologia.', falta:[], mcdtEmFalta:[], avisos:[] };
@@ -34,7 +36,7 @@ function decide(state, pat) {
 
   // cascata su → mp15 → p60
   for (const lvl of ['su','mp15','p60']) {
-    const hit = (pat.prioridade || []).find(c => c.nivel === lvl && sel.indexOf(c.value) !== -1);
+    const hit = (pat.prioridade || []).find(c => c.nivel === lvl && sel.indexOf(c.value) !== -1 && optVisivel(c, state));
     if (hit) return Object.assign(base, { nivel:lvl, motivo:hit.label });
   }
   if (pat.normalGate === 'mfr')
@@ -42,10 +44,10 @@ function decide(state, pat) {
   if (pat.normalGate === 'sempre')
     return Object.assign(base, { nivel: pat.nivelSempre || 'normal', motivo:'Referenciar sempre.' });
   if (pat.normalGate === 'criterios') {
-    const hit = (pat.prioridade || []).find(c => c.nivel === 'normal' && sel.indexOf(c.value) !== -1);
+    const hit = (pat.prioridade || []).find(c => c.nivel === 'normal' && sel.indexOf(c.value) !== -1 && optVisivel(c, state));
     if (hit) return Object.assign(base, { nivel:'normal', motivo:hit.label });
     return Object.assign(base, { nivel:'sem_criterios', motivo:'Nenhum critério de referenciação selecionado.',
-      falta:(pat.prioridade || []).filter(c => c.nivel === 'normal').map(c => c.label) });
+      falta:(pat.prioridade || []).filter(c => c.nivel === 'normal' && optVisivel(c, state)).map(c => c.label) });
   }
   // gate 'padrao': conservador cumprido + achados exigidos + AVD (+ motivado)
   const falta = [];
@@ -88,9 +90,9 @@ function buildText(state, pat, dec, ORTO) {
   const sexo = state.sexo === 'm' ? 'masculino' : state.sexo === 'f' ? 'feminino' : null;
   const comorb = lbl(ORTO.comorbilidades.options, (state.comorb || []).filter(c => c !== 'none'));
   const ach = lbl(pat.doenteTipo, state['ach_' + pat.id]);
-  const prio = lbl(pat.prioridade, state['prio_' + pat.id]);
+  const prio = lbl((pat.prioridade || []).filter(o => optVisivel(o, state)), state['prio_' + pat.id]);
   const mcdt = lbl(pat.mcdt, state['mcdt_' + pat.id]);
-  const trat = lbl(pat.tratamento, state['trat_' + pat.id]);
+  const trat = lbl((pat.tratamento || []).filter(o => optVisivel(o, state)), state['trat_' + pat.id]);
   const crit = lbl([{value:'avd',label:'queixas limitativas para as AVDs'},
                     {value:'motivado',label:'doente aceita e está motivado para tratamento cirúrgico'}], state.crit_normal);
   const evol = evolTxt(state);
@@ -144,8 +146,9 @@ function buildText(state, pat, dec, ORTO) {
     L.push('AVALIAÇÃO: sem critérios atuais de referenciação a Ortopedia (Documento de Trabalho ULSM).');
     if (dec.falta.length) L.push('Em falta: ' + dec.falta.join('; ') + '.');
     L.push('');
-    if (pat.tratamento.length)
-      L.push('PLANO: manter/otimizar tratamento conservador — ' + pat.tratamento.map(t => t.label).join('; ')
+    const planoTrat = (pat.tratamento || []).filter(o => optVisivel(o, state));
+    if (planoTrat.length)
+      L.push('PLANO: manter/otimizar tratamento conservador — ' + planoTrat.map(t => t.label).join('; ')
         + (pat.minConservadorMeses ? ' (duração mínima ' + pat.minConservadorMeses + ' meses)' : '') + '.');
     else
       L.push('PLANO: vigilância; referenciar quando cumprir os critérios acima.');
@@ -171,7 +174,7 @@ function buildFolheto(state, pat, dec, ORTO) {
   if (pat.leigo) { L.push('O QUE É: ' + pat.leigo); L.push(''); }
   L.push(FOLHETO_INTRO[dec.nivel]);
   if (dec.nivel !== 'su') {
-    const passos = (pat.tratamento || []).map(t => ORTO.tratamentoLeigo[t.value]).filter(Boolean);
+    const passos = (pat.tratamento || []).filter(t => optVisivel(t, state)).map(t => ORTO.tratamentoLeigo[t.value]).filter(Boolean);
     passos.forEach(p => L.push('• ' + p));
     if (!passos.length) L.push('• Siga as indicações dadas na consulta.');
     if (dec.nivel === 'sem_criterios' && pat.minConservadorMeses) {

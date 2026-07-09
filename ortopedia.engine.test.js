@@ -153,4 +153,25 @@ const t23 = E.buildText(s23, pat('neoformacao'), E.decide(s23, pat('neoformacao'
 assert.equal(t23.titulo, 'JOELHO', 'neoformação escolhida no joelho → 1.ª linha JOELHO');
 assert(/MOTIVO: Neoformação/.test(t23.texto), 'motivo deve manter a patologia');
 
+// 24. visibilidade condicional por IMC: perda ponderal só se IMC>25 (ou desconhecido)
+const s24a = st('gonalgia', { imc:22, trat_gonalgia:['analg','perda_ponderal'], tratdur:'lt3' });
+const d24a = E.decide(s24a, pat('gonalgia'));
+const t24a = E.buildText(s24a, pat('gonalgia'), d24a, ORTO);
+assert(!/Perda ponderal/.test(t24a.texto), 'IMC 22: perda ponderal não deve aparecer no texto (nem selecionada, nem no PLANO)');
+const f24a = E.buildFolheto(s24a, pat('gonalgia'), d24a, ORTO);
+assert(!/Perda de peso/.test(f24a.texto), 'IMC 22: folheto sem referência a excesso de peso');
+const s24b = st('gonalgia', { imc:31, trat_gonalgia:['perda_ponderal'], tratdur:'lt3' });
+const t24b = E.buildText(s24b, pat('gonalgia'), E.decide(s24b, pat('gonalgia')), ORTO);
+assert(/Perda ponderal/.test(t24b.texto), 'IMC 31: perda ponderal deve aparecer');
+const s24c = st('gonalgia', { tratdur:'lt3' }); // IMC desconhecido → PLANO inclui
+assert(/Perda ponderal/.test(E.buildText(s24c, pat('gonalgia'), E.decide(s24c, pat('gonalgia')), ORTO).texto),
+  'IMC desconhecido: perda ponderal mantém-se no plano');
+// 25. visibilidade condicional por idade: critério "Varo > 3 anos" ignorado num doente de 2 anos
+const s25 = st('varo_valgo', { idade:2, prio_varo_valgo:['varo3'] });
+const d25 = E.decide(s25, pat('varo_valgo'));
+assert.equal(d25.nivel, 'sem_criterios', '2 anos: varo3 invisível não pode dar NORMAL');
+assert(!d25.falta.some(f => /Varo em criança/.test(f)), '2 anos: varo3 não deve constar do "em falta"');
+assert.equal(E.decide(st('varo_valgo', { idade:5, prio_varo_valgo:['varo3'] }), pat('varo_valgo')).nivel, 'normal',
+  '5 anos: varo3 visível dá NORMAL');
+
 console.log('OK — todos os testes passaram');

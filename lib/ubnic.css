@@ -114,7 +114,7 @@
 .u-btn-secondary:hover { background: var(--teal-bg); }
 
 .u-btn-danger { background: var(--red); color: #fff; }
-.u-btn-danger:hover { filter: brightness(0.92); }
+.u-btn-danger:hover { background: var(--red); filter: brightness(0.85); }   /* re-afirma o fundo: um .u-btn.u-btn-danger herdaria o teal-dark do .u-btn:hover (mesma especificidade) */
 
 /* Botão copiar — 3 estados */
 .u-btn-copy { background: var(--s2); color: var(--teal); border-color: var(--bdr); }

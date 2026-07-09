@@ -133,6 +133,7 @@ window.addEventListener('DOMContentLoaded', function () {
   }
 
   // destaca os cards de patologia cuja faixa etária típica inclui a idade do doente
+  // (transversais — prótese/neoformação — nunca são destacadas: valem para qualquer idade)
   function marcarFaixaEtaria(s) {
     if (!s.regiao) return;
     var root = document.querySelector('[data-fid="pat_' + s.regiao + '"]');
@@ -140,8 +141,27 @@ window.addEventListener('DOMContentLoaded', function () {
     root.querySelectorAll('.u-opt').forEach(function (lab) {
       var inp = lab.querySelector('input');
       var p = inp && ORTO.patologias.find(function (x) { return x.id === inp.value; });
-      lab.classList.toggle('orto-age-match', !!p && ORTO.faixaMatch(p, s.idade));
+      lab.classList.toggle('orto-age-match', !!p && !p.transversal && ORTO.faixaMatch(p, s.idade));
     });
+  }
+
+  // opções com 'visivel' (ex.: perda ponderal só se IMC>25; critérios etários): esconde e desmarca
+  function aplicarOpcoesCondicionais(s) {
+    var pat = ORTO.pat(s);
+    if (!pat) return;
+    [['prio_' + pat.id, pat.prioridade], ['trat_' + pat.id, pat.tratamento], ['ach_' + pat.id, pat.doenteTipo]]
+      .forEach(function (par) {
+        var root = document.querySelector('[data-fid="' + par[0] + '"]');
+        if (!root) return;
+        (par[1] || []).forEach(function (o) {
+          if (typeof o.visivel !== 'function') return;
+          var inp = root.querySelector('input[value="' + o.value + '"]');
+          if (!inp) return;
+          var vis = !!o.visivel(s);
+          inp.closest('label').style.display = vis ? '' : 'none';
+          if (!vis && inp.checked) inp.click();   // desmarca pelo caminho real de eventos
+        });
+      });
   }
 
   // pulse quando a "duração do tratamento conservador" fica ativa (após escolher ≥1 tratamento)
@@ -163,6 +183,7 @@ window.addEventListener('DOMContentLoaded', function () {
     // auto-seleção só em resposta ao clique na região (evita disparos a meio de escrever a idade)
     if (mudou === 'regiao' && autoSelectPat(s)) return; // o setState dispara novo u:stack → re-render
     marcarFaixaEtaria(s);
+    aplicarOpcoesCondicionais(s);
     pulseTratdur();
     var pat = ORTO.pat(s);
     var dec = OrtoEngine.decide(s, pat);
