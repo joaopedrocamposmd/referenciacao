@@ -114,8 +114,19 @@ function buildText(state, pat, dec, ORTO) {
                sexo ? 'sexo ' + sexo : null].filter(Boolean).join(', ');
   L.push('HISTÓRIA CLÍNICA: ' + (cab || '—') + '.');
   L.push('Antecedentes: ' + (comorb.length ? comorb.join(', ') : 'sem comorbilidades relevantes') + '.');
-  if (state.imc) L.push('IMC: ' + state.imc + ' kg/m².');
-  if (ach.length) { L.push(''); L.push('QUADRO CLÍNICO: ' + ach.join('; ') + '.'); }
+  if (state.imc) {
+    const pesoAlt = (state.imc_weight != null && state.imc_height != null)
+      ? ' (peso ' + state.imc_weight + ' kg, altura ' + state.imc_height + ' cm)' : '';
+    L.push('IMC: ' + (Math.round(state.imc * 10) / 10) + ' kg/m²' + pesoAlt + '.');
+  }
+  const det = (pat.detalhes || [])
+    .map(d => ({ label:d.label, v: state['det_' + pat.id + '_' + d.id] }))
+    .filter(x => x.v != null && x.v !== '');
+  if (ach.length || det.length) {
+    L.push('');
+    if (ach.length) L.push('QUADRO CLÍNICO: ' + ach.join('; ') + '.');
+    det.forEach(x => L.push(x.label + ': ' + x.v + '.'));
+  }
   if (prio.length || crit.length) {
     L.push('');
     if (prio.length) L.push('CRITÉRIOS PRESENTES: ' + prio.join('; ') + '.');
@@ -123,7 +134,8 @@ function buildText(state, pat, dec, ORTO) {
   }
   L.push('');
   L.push('MCDT: ' + (mcdt.length ? mcdt.join('; ') : 'nenhum realizado') + '.');
-  if (dec.mcdtEmFalta.length) L.push('MCDT em falta (protocolo): ' + dec.mcdtEmFalta.join('; ') + '.');
+  // em EMERGENTE o doente segue para o SU — os MCDT do protocolo de consulta deixam de ser exigíveis
+  if (dec.mcdtEmFalta.length && dec.nivel !== 'su') L.push('MCDT em falta (protocolo): ' + dec.mcdtEmFalta.join('; ') + '.');
   L.push('');
   L.push('TRATAMENTO PRÉVIO: ' + (trat.length ? trat.join('; ') : 'não efetuado')
     + (state.tratdur ? ' (' + DUR_TXT[state.tratdur] + ')' : '') + '.');
@@ -141,7 +153,50 @@ function buildText(state, pat, dec, ORTO) {
   return { titulo: L[0], texto: L.join('\n') };
 }
 
-const OrtoEngine = { decide:decide, buildText:buildText, NIVEL:NIVEL };
+/* ---------- folheto para o doente ---------- */
+const FOLHETO_INTRO = {
+  su:            'Deve dirigir-se hoje ao Serviço de Urgência, como indicado pelo seu médico.',
+  mp15:          'Foi pedida consulta de Ortopedia com carácter muito prioritário. Enquanto aguarda:',
+  p60:           'Foi pedida consulta de Ortopedia com prioridade. Enquanto aguarda:',
+  normal:        'Foi pedida consulta de Ortopedia. Enquanto aguarda:',
+  mfr:           'Foi orientado para consulta de Medicina Física e Reabilitação (fisiatria). Enquanto aguarda:',
+  sem_criterios: 'Nesta fase, o tratamento indicado é conservador (sem cirurgia). O seu plano:',
+};
+
+function buildFolheto(state, pat, dec, ORTO) {
+  if (!pat || dec.nivel === 'incompleto') return { titulo:'', texto:'' };
+  const L = [];
+  L.push('INFORMAÇÃO PARA O DOENTE — ' + pat.nome.toUpperCase());
+  L.push('');
+  if (pat.leigo) { L.push('O QUE É: ' + pat.leigo); L.push(''); }
+  L.push(FOLHETO_INTRO[dec.nivel]);
+  if (dec.nivel !== 'su') {
+    const passos = (pat.tratamento || []).map(t => ORTO.tratamentoLeigo[t.value]).filter(Boolean);
+    passos.forEach(p => L.push('• ' + p));
+    if (!passos.length) L.push('• Siga as indicações dadas na consulta.');
+    if (dec.nivel === 'sem_criterios' && pat.minConservadorMeses) {
+      L.push('');
+      L.push('Este tratamento deve ser mantido, de forma continuada, durante pelo menos '
+        + pat.minConservadorMeses + ' meses antes de reavaliar a necessidade de consulta hospitalar.');
+    }
+    if (pat.anexo === 'anexo1' && ORTO.anexo1) {
+      L.push('');
+      L.push(ORTO.anexo1.titulo.toUpperCase() + ':');
+      ORTO.anexo1.passos.forEach((p, i) => L.push((i + 1) + '. ' + p));
+    }
+  }
+  // em EMERGENTE o doente vai já ao SU — sinais de alarme e reavaliação não se aplicam
+  if (dec.nivel !== 'su') {
+    L.push('');
+    L.push('SINAIS DE ALARME — procure ajuda médica se tiver:');
+    (ORTO.alarmeDoente || []).forEach(a => L.push('• ' + a));
+    L.push('');
+    L.push('Se as queixas se agravarem ou persistirem apesar do tratamento, volte a marcar consulta com o seu médico de família.');
+  }
+  return { titulo: L[0], texto: L.join('\n') };
+}
+
+const OrtoEngine = { decide:decide, buildText:buildText, buildFolheto:buildFolheto, NIVEL:NIVEL };
 root.OrtoEngine = OrtoEngine;
 if (typeof module !== 'undefined' && module.exports) module.exports = OrtoEngine;
 })(typeof window !== 'undefined' ? window : globalThis);

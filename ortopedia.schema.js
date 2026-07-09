@@ -327,7 +327,7 @@ const ORTO = {
       {value:'jovem_desp',label:'Jovem desportista após tratamento conservador',nivel:'p60'} ],
     normalGate:'padrao', minConservadorMeses:6,
     mcdt:[ {value:'rx_pes',label:'Raio-X dos pés em carga (face e perfil) — pode existir esporão calcâneo'},
-           {value:'eco_retrope',label:'Ecografia do retropé (espessamento)'} ],
+           {value:'eco_retrope',label:'Ecografia do retropé (espessamento do tendão)'} ],
     tratamento:[ {value:'calcado',label:'Alteração do calçado'},{value:'talonete',label:'Talonete calcâneo de gel'},
                  {value:'alongamento',label:'Exercícios de alongamento (anexo 1 do documento)'},
                  {value:'fisio',label:'Fisioterapia'},{value:'aines',label:'Controlo da dor (AINEs)'} ],
@@ -444,7 +444,7 @@ const ORTO = {
       {value:'genito_urinarias',label:'Alterações genito-urinárias'} ],
     prioridade:[
       {value:'defice_trauma',label:'Défice neurológico ou existência de trauma recente',nivel:'su'} ],
-    normalGate:'sempre', nivelSempre:'mp15', minConservadorMeses:0,
+    normalGate:'sempre', nivelSempre:'mp15', minConservadorMeses:3,
     mcdt:[ {value:'rx_segmento',label:'Raio-X da coluna, segmento afetado, em carga (face e perfil)'},
            {value:'tac_segmento',label:'TAC do segmento afetado'} ],
     tratamento:[ {value:'analg',label:'Controlo da dor (AINEs, paracetamol, tramadol)'},{value:'repouso',label:'Repouso'} ],
@@ -458,12 +458,15 @@ const ORTO = {
       {value:'trauma',label:'Existência de trauma'},
       {value:'sinais_infl',label:'Existência de sinais inflamatórios'},
       {value:'perda_mob',label:'Mobilidade passiva/ativa diminuída face às mobilidades prévias'} ],
+    detalhes:[
+      {id:'tempo_protese',label:'Tempo de vida da prótese e complicações',placeholder:'ex.: PTA há 8 anos, sem intercorrências até agora'},
+      {id:'caract_dor',label:'Caracterização da dor',placeholder:'ex.: dor inguinal mecânica, em carga, desde há 2 meses'} ],
     prioridade:[
       {value:'susp_lux',label:'Suspeita de luxação/fratura/infeção de prótese',nivel:'su'},
       {value:'lux_recorrente',label:'Luxação recorrente',nivel:'mp15'},
       {value:'evol_prog',label:'Queixas de evolução progressiva (perda de mobilidade/capacidade da marcha)',nivel:'p60'} ],
     normalGate:'padrao', requerMotivacao:false, minConservadorMeses:3,
-    mcdt:[ {value:'rx_protese',label:'Raio-X face e perfil (linhas de radiolucência progressivas, subsidência de componentes, osteólise)'} ],
+    mcdt:[ {value:'rx_protese',label:'Raio-X face e perfil da anca (linhas de radiolucência progressivas, subsidência de componentes, osteólise)'} ],
     tratamento:[ {value:'analg',label:'Controlo da dor (AINEs, paracetamol, tramadol)'},{value:'repouso',label:'Repouso'},
                  {value:'fisio_baixo',label:'Fisioterapia; exercícios de baixo impacto/hidroterapia'} ],
     idade:null,
@@ -473,12 +476,14 @@ const ORTO = {
   { id:'neoformacao', regiao:'neoformacao', nome:'Neoformação', lado:true,
     cardDesc:'Documentar aspeto morfológico, ritmo de crescimento e sintomatologia associada (dor, limitação da mobilidade).',
     doenteTipo:[
-      {value:'morfologia',label:'Aspeto morfológico da lesão documentado'},
-      {value:'crescimento',label:'Ritmo de crescimento documentado'},
-      {value:'sintomas',label:'Sintomatologia associada (dor e limitação da mobilidade)'} ],
+      {value:'dor',label:'Dor associada'},
+      {value:'lim_mob',label:'Limitação da mobilidade'} ],
+    detalhes:[
+      {id:'morfologia',label:'Aspeto morfológico da lesão',placeholder:'ex.: nódulo duro e aderente, ~2 cm, face dorsal do punho'},
+      {id:'crescimento',label:'Ritmo de crescimento',placeholder:'ex.: estável há 2 anos / crescimento rápido no último mês'} ],
     prioridade:[
       {value:'susp_malig',label:'Características suspeitas de malignidade',nivel:'mp15'},
-      {value:'rutura_iminente',label:'Risco de rutura iminente ou com solução de continuidade',nivel:'p60'} ],
+      {value:'rutura_iminente',label:'Risco de rutura iminente ou com solução de continuidade; doente aceita e está motivado para tratamento cirúrgico',nivel:'p60'} ],
     normalGate:'sempre', minConservadorMeses:0,
     mcdt:[ {value:'rx_mao_punho',label:'Raio-X face e perfil da mão/punho'},
            {value:'eco_tac',label:'Ecografia e/ou TAC se lesões de maior dimensão'} ],
@@ -490,8 +495,9 @@ const ORTO = {
   { id:'pe_boto', regiao:'infantil', nome:'Pé boto', lado:true,
     cardDesc:'Diagnóstico clínico: retropé em equino e varo; mediopé cavo; antepé em adução; pregas cutâneas mediais e posteriores.',
     doenteTipo:[
-      {value:'equino_varo',label:'Retropé em equino e varo; mediopé cavo; antepé em adução; pregas cutâneas mediais e posteriores'},
-      {value:'contexto',label:'Patologia associada / dados do parto e gravidez documentados'} ],
+      {value:'equino_varo',label:'Retropé em equino e varo; mediopé cavo; antepé em adução; pregas cutâneas mediais e posteriores'} ],
+    detalhes:[
+      {id:'perinatal',label:'Patologia associada / parto e gravidez',placeholder:'ex.: gravidez vigiada, parto eutócico às 39s, sem outra patologia'} ],
     prioridade:[],
     normalGate:'sempre', nivelSempre:'mp15', minConservadorMeses:0,
     mcdt:[ {value:'clinico',label:'O diagnóstico é clínico'} ],
@@ -506,6 +512,8 @@ const ORTO = {
       {value:'barlow',label:'Barlow/Ortolani positivos ou limitação da abdução da anca (< 3 meses)'},
       {value:'galeazzi',label:'Limitação da abdução da anca e discrepância de comprimento dos membros — Galeazzi (> 3 meses)'},
       {value:'trend',label:'Trendelenburg, obliquidade pélvica, lordose lombar (> 1 ano)'} ],
+    detalhes:[
+      {id:'perinatal',label:'Patologia associada / parto e gravidez',placeholder:'ex.: apresentação pélvica, AF de displasia'} ],
     prioridade:[],
     normalGate:'sempre', nivelSempre:'mp15', minConservadorMeses:0,
     mcdt:[ {value:'eco_anca',label:'Ecografia perante clínica sugestiva até aos 4-6 meses; ecografia de rastreio às 6/8 semanas se fatores de risco'},
@@ -520,6 +528,8 @@ const ORTO = {
       {value:'perfil',label:'Sexo masculino, obeso, início da adolescência'},
       {value:'coxalgia',label:'Coxalgia ou dor referida ao joelho'},
       {value:'marcha_re',label:'Marcha claudicante com membro em rotação externa; sinal de Drehmann'} ],
+    detalhes:[
+      {id:'perinatal',label:'Patologia associada / parto e gravidez / duração das queixas',placeholder:'ex.: sem antecedentes; coxalgia há 3 semanas'} ],
     prioridade:[],
     normalGate:'sempre', nivelSempre:'mp15', minConservadorMeses:0,
     mcdt:[ {value:'rx_bacia_low',label:'Raio-X AP da bacia e perfil de Lauenstein (sinal de Klein, sinal "S")'} ],
@@ -533,6 +543,8 @@ const ORTO = {
       {value:'perfil',label:'Adolescente, sexo feminino, curva torácica direita'},
       {value:'assimetria',label:'Assimetria de ombros e/ou cintura, proeminência de uma omoplata, giba torácica/lombar, desvio do tronco em relação à pelve'},
       {value:'adams',label:'Teste de Adams positivo'} ],
+    detalhes:[
+      {id:'pat_assoc',label:'Patologia associada / evolução da deformidade',placeholder:'ex.: sem patologia associada; giba notada há 6 meses, a aumentar'} ],
     prioridade:[
       {value:'cobb10',label:'Curva > 10º (ângulo de Cobb)',nivel:'normal'} ],
     normalGate:'criterios', minConservadorMeses:0,
@@ -544,6 +556,8 @@ const ORTO = {
   { id:'varo_valgo', regiao:'infantil', nome:'Deformidade varo/valgo dos membros inferiores', lado:false,
     cardDesc:'Avaliar contra a sequência fisiológica: varo até aos 18 meses, pico de valgo aos 3-5 anos, valgo do adulto (5-7º) aos 7/8 anos.',
     doenteTipo:[],
+    detalhes:[
+      {id:'pat_assoc',label:'Patologia associada / evolução da deformidade',placeholder:'ex.: valgo bilateral notado aos 4 anos, sem correção desde então'} ],
     prioridade:[
       {value:'unilateral',label:'Varo/valgo unilateral ou assimétrico, independentemente da idade',nivel:'p60'},
       {value:'valgo8',label:'Valgo > 8-10º (AFT) ou DIM > 8-10 cm, progressivo/sem sinais de correção, em > 7 anos',nivel:'normal'},
@@ -558,19 +572,24 @@ const ORTO = {
   { id:'dismetria', regiao:'infantil', nome:'Dismetria dos membros inferiores', lado:false,
     cardDesc:'Medição: blocos sob o membro mais curto até nivelar a pelve, ou fita métrica da EIAS ao maléolo medial.',
     doenteTipo:[],
+    detalhes:[
+      {id:'pat_assoc',label:'Patologia associada / evolução da deformidade / medição',placeholder:'ex.: dismetria de 2 cm medida com blocos, estável'} ],
     prioridade:[
       {value:'maior15',label:'Dismetria > 1,5 cm',nivel:'normal'} ],
     normalGate:'criterios', minConservadorMeses:0,
     mcdt:[ {value:'rx_extralongo_mi',label:'Raio-X extralongo dos membros inferiores'} ],
     tratamento:[],
     idade:{min:0,max:18},
-    notas:['Medição: com o doente em ortostatismo, colocar blocos sob o membro mais curto até a pelve ficar nivelada (altura dos blocos = discrepância); ou fita métrica desde a espinha ilíaca antero-superior até ao maléolo medial.'] },
+    notas:['Referenciar sempre (linha de tratamento do documento; o critério de referenciação NORMAL é dismetria > 1,5 cm).',
+           'Medição: com o doente em ortostatismo, colocar blocos sob o membro mais curto até a pelve ficar nivelada (altura dos blocos = discrepância); ou fita métrica desde a espinha ilíaca antero-superior até ao maléolo medial.'] },
 
   { id:'desvios_torsionais', regiao:'infantil', nome:'Desvios torsionais dos membros inferiores', lado:false,
     cardDesc:'In-toing (pés para dentro) ou out-toing (pés para fora).',
     doenteTipo:[
       {value:'intoing',label:'In-toing (pés para dentro)'},
       {value:'outtoing',label:'Out-toing (pés para fora)'} ],
+    detalhes:[
+      {id:'pat_assoc',label:'Patologia associada / evolução da deformidade',placeholder:'ex.: in-toing bilateral desde o início da marcha, sem quedas'} ],
     prioridade:[
       {value:'unilateral',label:'Desvio unilateral',nivel:'normal'},
       {value:'bilateral_prog',label:'Desvio bilateral progressivo',nivel:'normal'},
@@ -589,6 +608,8 @@ const ORTO = {
       {value:'too_many_toes',label:'Abdução do antepé — "too many toes sign"'},
       {value:'flexivel',label:'Flexível: arco reconstitui com teste em pontas dos pés e teste de Jack (extensão passiva do hálux)'},
       {value:'rigido_achado',label:'Rígido: arco não reconstitui com as manobras'} ],
+    detalhes:[
+      {id:'pat_assoc',label:'Patologia associada / evolução da deformidade',placeholder:'ex.: pé plano flexível desde sempre, dor após desporto no último ano'} ],
     prioridade:[
       {value:'rigido',label:'Pé plano-valgo rígido ou unilateral',nivel:'normal'},
       {value:'flex_sint',label:'Pé plano-valgo flexível persistente e sintomático após os 8-10 anos',nivel:'normal'} ],
@@ -605,6 +626,8 @@ const ORTO = {
       {value:'varo_retrope',label:'Varo do retropé — calcâneo em inversão'},
       {value:'garra',label:'Garra dos dedos'},
       {value:'calosidades',label:'Calosidades plantares'} ],
+    detalhes:[
+      {id:'pat_assoc',label:'Patologia associada / evolução da deformidade',placeholder:'ex.: suspeita neuromuscular, deformidade progressiva desde os 6 anos'} ],
     prioridade:[],
     normalGate:'sempre', minConservadorMeses:0,
     mcdt:[ {value:'rx_pes',label:'Raio-X face e perfil dos pés em carga'} ],
@@ -636,6 +659,102 @@ ORTO.faixaMatch = function (p, idade) {
   return idade != null && idade !== '' && +idade >= p.faixa.min && +idade <= p.faixa.max;
 };
 
+/* ---------- conteúdo do folheto para o doente ----------
+   NOTA: explicações leigas e sinais de alarme são conteúdo ADICIONAL (não constam do
+   documento de trabalho); redigidos segundo boa prática geral, para validação clínica local. */
+const LEIGO = {
+  coifa:'Lesão dos tendões que envolvem o ombro (coifa dos rotadores), que pode causar dor e fraqueza ao elevar o braço.',
+  tend_calc:'Depósitos de cálcio num tendão do ombro, que causam dor, muitas vezes pior à noite.',
+  omartrose:'Desgaste da cartilagem da articulação do ombro (artrose), que causa dor e rigidez.',
+  capsulite:'"Ombro congelado" — inflamação e aperto da cápsula do ombro; na maioria dos casos resolve por si, podendo demorar até 24 meses.',
+  instabilidade_ombro:'Ombro que "salta" ou dá sensação de sair do sítio, sobretudo durante o desporto.',
+  epicondilite:'Inflamação dos tendões do cotovelo ("cotovelo de tenista/golfista"), com dor num dos lados do cotovelo.',
+  artrose_cotovelo:'Desgaste da cartilagem do cotovelo, com dor e rigidez.',
+  dupuytren:'Espessamento na palma da mão que pode ir "encolhendo" um ou mais dedos.',
+  rizartrose:'Desgaste da articulação da base do polegar, com dor a agarrar e a fazer pinça.',
+  dequervain:'Inflamação dos tendões do polegar junto ao punho, com dor no bordo do punho.',
+  canal_carpico:'Compressão de um nervo ao nível do punho, com formigueiros e dormência na mão, sobretudo à noite.',
+  coxartrose:'Desgaste da cartilagem da anca (artrose), com dor na virilha e dificuldade progressiva a andar.',
+  coxalgia_jovem:'Dor na anca do adulto jovem, geralmente relacionada com o desporto e com a forma da articulação.',
+  gonalgia:'Dor no joelho, frequentemente por desgaste da cartilagem ou sobrecarga.',
+  torcao_joelho:'Lesão do joelho após um movimento de torção, que pode atingir os meniscos ou os ligamentos.',
+  hallux_valgus:'"Joanete" — desvio do dedo grande do pé, com proeminência dolorosa.',
+  hallux_rigidus:'Desgaste da articulação do dedo grande do pé, com dor e rigidez.',
+  dedos_menores:'Deformidade dos dedos do pé (em garra ou em martelo), com dor e dificuldade com o calçado.',
+  metatarsalgia:'Dor na planta do pé, na zona de apoio dos dedos, muitas vezes com calosidades.',
+  fasceite:'Inflamação da fáscia da planta do pé, com dor no calcanhar sobretudo nos primeiros passos da manhã.',
+  aquiles:'Inflamação do tendão de Aquiles (atrás do tornozelo), com dor no esforço.',
+  entorse_tornozelo:'Sequelas de entorses do tornozelo, com dor persistente ou sensação de falta de firmeza.',
+  artrose_tornozelo:'Desgaste da cartilagem do tornozelo ou do retropé, com dor e limitação a andar.',
+  pe_plano_adq:'Queda progressiva do arco do pé no adulto, com dor no tornozelo e no lado interno do pé.',
+  cervical:'Dor no pescoço, por vezes com irradiação ou formigueiros para os braços.',
+  lombar:'Dor no fundo das costas, por vezes com irradiação ou formigueiros para as pernas.',
+  fratura_osteop:'Fratura de uma vértebra por fragilidade do osso (osteoporose).',
+  dor_protese:'Dor numa articulação já operada com prótese, que deve ser avaliada.',
+  neoformacao:'Tumefação ("alto") de aparecimento recente, que deve ser avaliada.',
+  pe_boto:'Deformidade do pé do bebé presente ao nascer, que precisa de tratamento precoce por Ortopedia.',
+  displasia_anca:'Desenvolvimento incompleto da anca do bebé, que precisa de avaliação precoce por Ortopedia.',
+  epifisiolise:'Deslizamento da cabeça do fémur no adolescente — precisa de avaliação urgente e de evitar apoiar a perna.',
+  escoliose:'Curvatura da coluna, mais frequente na adolescência.',
+  varo_valgo:'Pernas "arqueadas" ou "em X" na criança — na maioria dos casos faz parte do crescimento normal.',
+  dismetria:'Diferença de comprimento entre as pernas.',
+  desvios_torsionais:'Pés "para dentro" ou "para fora" na criança — na maioria dos casos corrige com o crescimento.',
+  pe_plano_valgo:'Pé plano na criança — quase sempre flexível e parte do desenvolvimento normal.',
+  pe_cavo_varo:'Arco do pé demasiado alto na criança, que deve ser sempre avaliado.',
+};
+ORTO.patologias.forEach(function (p) { p.leigo = LEIGO[p.id] || ''; });
+ORTO.patologias.find(function (p) { return p.id === 'fasceite'; }).anexo = 'anexo1';
+
+// tratamentos do documento → linguagem simples (chave = value dos chips de tratamento)
+ORTO.tratamentoLeigo = {
+  aines:'Medicação anti-inflamatória para a dor, conforme indicado pelo seu médico.',
+  analg:'Medicação para a dor (anti-inflamatórios, paracetamol ou outra), conforme indicado pelo seu médico.',
+  aines_dipro:'Medicação anti-inflamatória para a dor; em alguns casos, uma injeção prescrita pelo médico.',
+  aines_cct:'Medicação para a dor, conforme indicado pelo seu médico.',
+  fisio:'Fisioterapia.',
+  fisio_baixo:'Fisioterapia e exercício de baixo impacto: caminhada leve, bicicleta ou exercícios na água.',
+  banda:'Banda de cotovelo (banda para epicondilite) durante as atividades.',
+  tala:'Tala de imobilização do polegar: todo o dia no 1.º mês; só à noite no 2.º mês.',
+  calcado:'Calçado largo e confortável, evitando saltos altos e biqueiras apertadas.',
+  calcado_rocker:'Calçado com sola curva (tipo "rocker"), que reduz a dobragem dolorosa do pé; adaptar as atividades.',
+  separador:'Separador de silicone entre os dedos.',
+  palmilha:'Palmilha adequada, aconselhada em ortopedia técnica.',
+  palmilha_rigida:'Palmilha rígida na parte da frente do pé.',
+  palmilha_arco:'Palmilha com apoio do arco do pé; adaptar as atividades.',
+  talonete:'Almofada de gel no calcanhar, dentro do sapato.',
+  alongamento:'Exercícios de alongamento diários (ver exercícios abaixo).',
+  imob_elastica:'Ligadura ou estabilizador elástico do tornozelo durante o desporto.',
+  colar:'Repouso e colar cervical apenas na fase aguda, no máximo 72 horas.',
+  repouso:'Repouso relativo na fase aguda (evitar o que agrava a dor; não ficar imobilizado).',
+  perda_ponderal:'Perda de peso, se excesso de peso — alivia a carga sobre a articulação.',
+  vigilancia:'Vigilância da evolução; volte à consulta se notar agravamento da contratura dos dedos.',
+  quisto_cons:'Para quistos: medicação anti-inflamatória e gelo local.',
+  descarga:'Não apoiar a perna (usar canadianas) até à observação hospitalar.',
+};
+
+// Anexo 1 do documento — exercícios para fasceíte plantar (imagem: anexo1-fasceite.png)
+ORTO.anexo1 = {
+  titulo:'Exercícios diários — fasceíte plantar (Anexo 1 do protocolo)',
+  imagem:'anexo1-fasceite.png',
+  passos:[
+    'Sentado, com a perna esticada, puxe a ponta do pé na sua direção com uma toalha; mantenha 30 segundos, 3 vezes.',
+    'De frente para a parede, com a perna de trás esticada e o calcanhar no chão, incline-se em direção à parede para alongar a barriga da perna; 30 segundos, 3 vezes.',
+    'Sentado num banco, deslize o pé para trás mantendo os dedos no chão, para alongar a planta do pé; 30 segundos.',
+    'Com o pé sobre uma toalha estendida no chão, use os dedos para a enrugar e puxar; 10 a 15 repetições.',
+    'Na beira de um degrau, deixe o calcanhar descair lentamente abaixo do nível do degrau; 30 segundos.',
+    'Role uma garrafa ou um rolo sob a planta do pé, 1 a 2 minutos.',
+  ],
+};
+
+// sinais de alarme para o doente (folheto) — conteúdo adicional, fora do documento
+ORTO.alarmeDoente = [
+  'Febre ou arrepios associados à dor.',
+  'Dor intensa em repouso ou durante a noite, que não alivia.',
+  'Perda de força, dormência ou formigueiros de aparecimento recente.',
+  'Incapacidade súbita de mexer ou de apoiar o membro.',
+  'Na dor de costas: dificuldade em urinar/controlar os esfíncteres ou dormência na zona genital — recorra de imediato ao Serviço de Urgência.',
+];
+
 /* ---------- helpers de estado ---------- */
 ORTO.patId = function (s) { return s.regiao ? (s['pat_' + s.regiao] || null) : null; };
 ORTO.pat = function (s) { const id = ORTO.patId(s); return ORTO.patologias.find(p => p.id === id) || null; };
@@ -656,6 +775,11 @@ ORTO.buildModules = function () {
   P.forEach(p => {
     // rótulos-frase → checkbox-list (default do multi); chips só para rótulos curtos (guia de seleção do catálogo)
     if (p.doenteTipo.length) quadro.push(per(p, 'ach', { label:'Achados — doente tipo', type:'multi', options:p.doenteTipo }));
+    // detalhes textuais exigidos pela história clínica do documento (ex.: morfologia da lesão, parto e gravidez)
+    (p.detalhes || []).forEach(d => quadro.push({
+      id:'det_' + p.id + '_' + d.id, label:d.label, type:'text', placeholder:d.placeholder,
+      showIf: s => ORTO.patId(s) === p.id,
+    }));
     if (p.prioridade.length) quadro.push(per(p, 'prio', { label:'Critérios de prioridade', type:'multi',
       options:p.prioridade.map(c => ({ value:c.value, label:c.label, finding:true })) }));
     if (p.mcdt.length) mcdt.push(per(p, 'mcdt', { label:'MCDT realizados', type:'multi', options:p.mcdt }));
@@ -668,7 +792,6 @@ ORTO.buildModules = function () {
       // sexo removido do questionário: não filtra patologias nem altera a decisão
       { id:'comorb', label:'Comorbilidades', type:'multi', density:'chips', default:'none',
         groups:ORTO.comorbilidades.groups, options:ORTO.comorbilidades.options },
-      { id:'imc', label:'IMC', type:'imc', showIf: s => ORTO.imcRelevant.indexOf(ORTO.patId(s)) !== -1 },
     ]},
     { id:'regiao', title:'Região anatómica', navLabel:'R', fields:[
       { id:'regiao', label:'Região', type:'single', density:'buttons',
@@ -680,6 +803,8 @@ ORTO.buildModules = function () {
         options:[{value:'dto',label:'Direito'},{value:'esq',label:'Esquerdo'},{value:'bilat',label:'Bilateral'}],
         showIf: s => { const p = ORTO.pat(s); return !!p && p.lado; } },
       { id:'evol', label:'Tempo de evolução', type:'onset', showIf: s => !!ORTO.patId(s) },
+      // IMC vive no quadro clínico: só é pedido quando a patologia escolhida o torna relevante
+      { id:'imc', label:'IMC', type:'imc', showIf: s => ORTO.imcRelevant.indexOf(ORTO.patId(s)) !== -1 },
     ].concat(quadro)},
     { id:'mcdt', title:'MCDT', navLabel:'M', fields: mcdt },
     { id:'trat', title:'Tratamento prévio', navLabel:'T', fields: trat.concat([

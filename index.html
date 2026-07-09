@@ -3,7 +3,7 @@
 <title>Referenciação Ortopedia — ULSM</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b877b'/%3E%3Cpath d='M28 30 V50 C28 75 40 82 50 82 C60 82 72 75 72 50 V30' stroke='white' stroke-width='12' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='30' r='8' fill='white'/%3E%3Ccircle cx='50' cy='82' r='8' fill='white'/%3E%3Ccircle cx='72' cy='30' r='8' fill='white'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../ubnic-brand-kit/lib/ubnic.css">
+<link rel="stylesheet" href="lib/ubnic.css">
 <style>
   .wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:24px}
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
@@ -39,9 +39,25 @@
   /* painel de resultado */
   #orto-report{display:flex;flex-direction:column;gap:12px}
   #orto-report .u-alert{margin:0}
-  #orto-texto{background:var(--s1);border:1px solid var(--bdr);border-radius:12px;padding:14px;
+  #orto-texto,#orto-folheto{background:var(--s1);border:1px solid var(--bdr);border-radius:12px;padding:14px;
     font-family:var(--font-mono);font-size:12px;line-height:1.55;color:var(--t1);
     white-space:pre-wrap;word-break:break-word;margin:0}
+  /* tabs do painel (referenciação | folheto) */
+  .orto-tabs{display:flex;gap:6px}
+  .orto-tab{border:1px solid var(--bdr2);background:var(--s2);color:var(--t2);border-radius:8px;
+    padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-sans)}
+  .orto-tab.on{background:var(--teal);color:#fff;border-color:transparent}
+  /* rodapé */
+  .orto-footer{margin-top:28px;display:flex;flex-direction:column;gap:12px}
+  .orto-footer .disclaimer{font-size:11.5px;color:var(--t3);line-height:1.5;margin:0}
+  /* impressão: só o folheto */
+  #orto-print{display:none}
+  @media print{
+    .u-bg,.u-grid,.wrap{display:none!important}
+    #orto-print{display:block!important;color:#000;font-family:'Inter',sans-serif;padding:8px}
+    #orto-print pre{white-space:pre-wrap;font-family:'Inter',sans-serif;font-size:12.5px;line-height:1.6;margin:0}
+    #orto-print img{max-width:100%;margin-top:14px;page-break-inside:avoid}
+  }
 </style>
 </head><body class="u-root">
 <div class="u-bg"><div class="u-orb a"></div><div class="u-orb b"></div><div class="u-orb c"></div></div>
@@ -67,15 +83,21 @@
       <aside id="orto-report"></aside>
     </div>
   </div>
+  <footer class="orto-footer">
+    <div class="u-alert warn"><div><b>Sinais de alarme — considerar vias rápidas (SU/contacto direto), independentemente do protocolo:</b><br>
+      febre ou sinais sistémicos · perda ponderal inexplicada · dor noturna não mecânica ou em repouso · história de neoplasia · défice neurológico de novo ou progressivo · alterações de esfíncteres ou anestesia em sela · trauma major · imunossupressão com dor óssea.</div></div>
+    <p class="disclaimer">Esta aplicação é apenas uma ferramenta administrativa para facilitação da implementação do protocolo de acesso à consulta do Serviço de Ortopedia da ULSM. Todo o conteúdo clínico é da responsabilidade desse Serviço, alheio à UBNIC.</p>
+  </footer>
 </div>
-<script src="../ubnic-brand-kit/lib/ubnic.js" defer></script>
+<div id="orto-print"></div>
+<script src="lib/ubnic.js" defer></script>
 <script src="ortopedia.schema.js" defer></script>
 <script src="ortopedia.engine.js" defer></script>
 <script>
 window.addEventListener('DOMContentLoaded', function () {
   if (!window.UBNIC || !window.ORTO || !window.OrtoEngine) {
     document.getElementById('orto-collect').innerHTML =
-      '<div class="u-alert warn">A biblioteca UBNIC não foi encontrada — a pasta <b>ubnic-brand-kit</b> tem de estar ao lado da pasta desta aplicação (…/UBNIC/ubnic-brand-kit/lib/).</div>';
+      '<div class="u-alert warn">A biblioteca UBNIC não foi encontrada — verifique se a pasta <b>lib</b> foi publicada junto com a aplicação.</div>';
     return;
   }
   var stack = UBNIC.stack('#orto-collect', {
@@ -142,6 +164,7 @@ window.addEventListener('DOMContentLoaded', function () {
     var dec = OrtoEngine.decide(s, pat);
     var n = OrtoEngine.NIVEL[dec.nivel];
     var out = OrtoEngine.buildText(s, pat, dec, ORTO);
+    var fol = OrtoEngine.buildFolheto(s, pat, dec, ORTO);
     var h = '';
     // conteúdo num único filho: .u-alert é flex, e <b>+texto soltos viravam 2 colunas
     h += '<div class="u-alert ' + n.alert + '"><div><b>' + esc(n.label) + '</b>' +
@@ -150,18 +173,43 @@ window.addEventListener('DOMContentLoaded', function () {
       h += '<div class="u-alert info"><div><b>Em falta para referenciação NORMAL:</b><br>· ' + dec.falta.map(esc).join('<br>· ') + '</div></div>';
     (dec.avisos || []).forEach(function (a) { h += '<div class="u-alert info">' + esc(a) + '</div>'; });
     if (out.texto) {
-      h += '<pre class="u-mono" id="orto-texto">' + esc(out.texto) + '</pre>';
-      h += '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
-           '<button class="u-btn u-btn-copy" data-copy="#orto-texto">Copiar texto</button>' +
-           '<button class="u-btn u-btn-secondary" data-orto-reset>Recomeçar</button></div>';
+      h += '<div class="orto-tabs">' +
+           '<button class="orto-tab' + (aba === 'ref' ? ' on' : '') + '" data-orto-aba="ref">Referenciação</button>' +
+           '<button class="orto-tab' + (aba === 'fol' ? ' on' : '') + '" data-orto-aba="fol">Folheto doente</button></div>';
+      if (aba === 'ref') {
+        h += '<pre class="u-mono" id="orto-texto">' + esc(out.texto) + '</pre>';
+        h += '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+             '<button class="u-btn u-btn-copy" data-copy="#orto-texto">Copiar texto</button>' +
+             '<button class="u-btn u-btn-secondary" data-orto-reset>Recomeçar</button></div>';
+      } else {
+        h += '<pre class="u-mono" id="orto-folheto">' + esc(fol.texto) + '</pre>';
+        h += '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+             '<button class="u-btn u-btn-copy" data-copy="#orto-folheto">Copiar folheto</button>' +
+             '<button class="u-btn" data-orto-print>Imprimir</button>' +
+             '<button class="u-btn u-btn-secondary" data-orto-reset>Recomeçar</button></div>';
+      }
     } else {
       h += '<p style="color:var(--t3);font-size:13px;margin:0">Escolha a região e a patologia para gerar o texto.</p>';
     }
     panel.innerHTML = h;
   }
+  var aba = 'ref';
 
-  // Recomeçar — confirmação em 2 passos (destrutivo)
+  // tabs referenciação/folheto + imprimir + Recomeçar (confirmação em 2 passos)
   panel.addEventListener('click', function (e) {
+    var tab = e.target.closest('[data-orto-aba]');
+    if (tab) { aba = tab.getAttribute('data-orto-aba'); render(); return; }
+    var pr = e.target.closest('[data-orto-print]');
+    if (pr) {
+      var s = stack.getState();
+      var pat = ORTO.pat(s);
+      var fol = OrtoEngine.buildFolheto(s, pat, OrtoEngine.decide(s, pat), ORTO);
+      var ph = '<pre>' + esc(fol.texto) + '</pre>';
+      if (pat && pat.anexo === 'anexo1') ph += '<img src="' + ORTO.anexo1.imagem + '" alt="' + esc(ORTO.anexo1.titulo) + '">';
+      document.getElementById('orto-print').innerHTML = ph;
+      window.print();
+      return;
+    }
     var rs = e.target.closest('[data-orto-reset]');
     if (!rs) return;
     if (rs.dataset.armed === '1') { stack.reset(); return; }
