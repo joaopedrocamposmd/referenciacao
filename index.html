@@ -16,7 +16,8 @@
   .cols{display:block}
   @media(min-width:1000px){
     .cols{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;align-items:start}
-    #orto-collect{max-width:840px;margin-inline:auto}
+    /* width:100% obrigatório: com margin auto, o item de grelha deixa de esticar (shrink-to-fit) */
+    #orto-collect{width:100%;max-width:840px;margin-inline:auto}
     #orto-report{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow-y:auto}
   }
   /* mobile: cartões a toda a largura; relatório no fim como banda destacada */
