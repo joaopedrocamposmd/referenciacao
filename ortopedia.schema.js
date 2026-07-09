@@ -781,7 +781,9 @@ ORTO.buildModules = function () {
       showIf: s => ORTO.patId(s) === p.id,
     }));
     if (p.prioridade.length) quadro.push(per(p, 'prio', { label:'Critérios de prioridade', type:'multi',
-      options:p.prioridade.map(c => ({ value:c.value, label:c.label, finding:true })) }));
+      // tone = prioridade que o critério desencadeia: SU/MP15 → vermelho, P60 → âmbar, NORMAL → verde
+      options:p.prioridade.map(c => ({ value:c.value, label:c.label, finding:true,
+        tone:{ su:'critical', mp15:'critical', p60:'warn', normal:'ok' }[c.nivel] })) }));
     if (p.mcdt.length) mcdt.push(per(p, 'mcdt', { label:'MCDT realizados', type:'multi', options:p.mcdt }));
     if (p.tratamento.length) trat.push(per(p, 'trat', { label:'Tratamento efetuado', type:'multi', options:p.tratamento }));
   });
@@ -814,8 +816,8 @@ ORTO.buildModules = function () {
           && (!p.tratamento.length || (s['trat_' + p.id] || []).length > 0); },
         options:[{value:'lt3',label:'< 3 meses'},{value:'m3_6',label:'3–6 meses'},{value:'ge6',label:'≥ 6 meses'}] },
       { id:'crit_normal', label:'Critérios para referenciação NORMAL', type:'multi', showIf:needTratDur,
-        options:[{value:'avd',label:'Queixas limitativas para as AVDs'},
-                 {value:'motivado',label:'Doente aceita e está motivado para tratamento cirúrgico'}] },
+        options:[{value:'avd',label:'Queixas limitativas para as AVDs',tone:'ok'},
+                 {value:'motivado',label:'Doente aceita e está motivado para tratamento cirúrgico',tone:'ok'}] },
     ])},
   ];
 };

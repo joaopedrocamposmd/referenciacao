@@ -717,6 +717,14 @@
 .u-note-max { color: var(--t3); font-size: 13px; font-family: var(--font-mono); }
 .u-note-label { font-weight: 600; font-size: 13px; color: var(--t1); margin-top: 4px; }
 .u-note-label:empty { display: none; }
+/* Botão "saltar": cinza, alinhado à direita, acima dos campos (secção opcional). */
+.u-card-skip-row { display: flex; justify-content: flex-end; }
+.u-card-skip { background: var(--t3); color: #fff; border: none; font-size: 12px; font-weight: 600; padding: 8px 15px; border-radius: var(--r); cursor: pointer; transition: background .15s ease; }
+.u-card-skip:hover { background: var(--t2); }
+/* Importância da opção (radio/multi NÃO compactos): bordo-esquerdo tingido, persiste mesmo selecionada. */
+.u-radio:not(.u-btns) .u-opt.tone-ok,       .u-multi .u-mopt.tone-ok       { border-left: 3px solid var(--green); }
+.u-radio:not(.u-btns) .u-opt.tone-warn,     .u-multi .u-mopt.tone-warn     { border-left: 3px solid var(--amber); }
+.u-radio:not(.u-btns) .u-opt.tone-critical, .u-multi .u-mopt.tone-critical { border-left: 3px solid var(--red); }
 /* Campo dentro do stack (envolve um u-* + label/info/validação) */
 .u-stack-field { display: flex; flex-direction: column; gap: 6px; scroll-margin-top: 120px; }  /* auto-advance: deixa a nav + a parte distal do bloco anterior visíveis (orientação) */
 .u-stack-field[hidden] { display: none; }

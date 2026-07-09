@@ -11,16 +11,22 @@
   .brand svg{height:30px;width:auto}
   h1{font-family:var(--font-sans);font-size:20px;color:var(--t1);margin:0 0 4px}
   .subtitle{font-size:13px;color:var(--t3);margin:0 0 16px}
-  /* #orto-nav envolve as colunas → é o pai alto da nav sticky; a nav vai para o topo via order:-1 */
-  #orto-nav{display:flex;flex-direction:column}
-  #orto-nav > .u-stack-nav{order:-1}
+  :root{--u-sticky-offset:12px}   /* scroll-margin dos passos do progressivo */
+  body{margin:0}
   .cols{display:block}
   @media(min-width:1000px){
     .cols{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;align-items:start}
     #orto-collect{max-width:840px;margin-inline:auto}
-    .u-stack-nav.u-bleed{padding-right:calc(380px + 28px + 16px)}
-    /* a nav do stack é sticky (top:0, ~52px de altura) → o painel cola-se ABAIXO dela */
-    #orto-report{position:sticky;top:68px;max-height:calc(100vh - 84px);overflow-y:auto}
+    #orto-report{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow-y:auto}
+  }
+  /* mobile: cartões a toda a largura; relatório no fim como banda destacada */
+  @media(max-width:999px){
+    .wrap{padding:14px 12px 24px}
+    #orto-report{margin:26px calc(50% - 50vw) 0;padding:18px 14px 20px;border-radius:0;
+      background:var(--teal-bg);border-top:3px solid var(--teal)}
+    #orto-report::before{content:'Resultado';display:block;font-size:11px;font-weight:700;
+      text-transform:uppercase;letter-spacing:.8px;color:var(--teal);margin-bottom:2px}
+    .orto-footer{margin-top:0;padding:16px 4px 0;border-top:1px solid var(--bdr)}
   }
   /* região anatómica em linhas: MS / MI / coluna / infantil / prótese·neoformação
      (a ordem das opções vem de ORTO.regioes; nth-child com grid-column-start:1 abre linha nova) */
@@ -103,8 +109,8 @@ window.addEventListener('DOMContentLoaded', function () {
   var stack = UBNIC.stack('#orto-collect', {
     name: 'orto',
     modules: ORTO.buildModules(),
-    nav: true, navTarget: '#orto-nav', navFullBleed: true,
-    boxedFields: true, markFindings: true, autoAdvance: true,
+    progressive: true,          // um passo de cada vez; concluídos colapsam com resumo
+    markFindings: true,
     applyDefaults: true,
   });
   var panel = document.getElementById('orto-report');
@@ -141,12 +147,13 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // pulse quando a "duração do tratamento conservador" aparece (após escolher ≥1 tratamento)
+  // pulse quando a "duração do tratamento conservador" fica ativa (após escolher ≥1 tratamento)
   var tratdurVisivel = false;
   function pulseTratdur() {
     var root = document.querySelector('[data-fid="tratdur"]');
-    var vis = !!root && !root.hasAttribute('hidden');
-    if (vis && !tratdurVisivel) {
+    var step = root && root.closest('.u-pstep');
+    var vis = step ? step.classList.contains('active') : (!!root && !root.hasAttribute('hidden'));
+    if (vis && !tratdurVisivel && root) {
       root.classList.remove('orto-pulse'); void root.offsetWidth; // reinicia a animação
       root.classList.add('orto-pulse');
     }
