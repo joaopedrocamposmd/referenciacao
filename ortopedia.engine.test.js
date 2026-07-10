@@ -174,4 +174,24 @@ assert(!d25.falta.some(f => /Varo em criança/.test(f)), '2 anos: varo3 não dev
 assert.equal(E.decide(st('varo_valgo', { idade:5, prio_varo_valgo:['varo3'] }), pat('varo_valgo')).nivel, 'normal',
   '5 anos: varo3 visível dá NORMAL');
 
+// 26. evolução < 3 meses → duração derivada 'lt3' (sem pergunta): texto mostra "< 3 meses" e falta a duração mínima
+const s26 = st('gonalgia', { evol:8, trat_gonalgia:['analg'] });   // 8 semanas de evolução, AINEs feitos, sem tratdur
+const d26 = E.decide(s26, pat('gonalgia'));
+assert.equal(d26.nivel, 'sem_criterios');
+assert(d26.falta.some(f => /duração mínima de 3 meses/.test(f)), 'evol 8sem: falta a duração mínima');
+assert(/\(< 3 meses\)\./.test(E.buildText(s26, pat('gonalgia'), d26, ORTO).texto), 'texto deve mostrar duração derivada "< 3 meses"');
+// sem tratamentos feitos, não inventa duração
+const s26b = st('gonalgia', { evol:8 });
+assert(/TRATAMENTO PRÉVIO: não efetuado\./.test(E.buildText(s26b, pat('gonalgia'), E.decide(s26b, pat('gonalgia')), ORTO).texto));
+// 27. alarmes do folheto condicionais por região
+const s27a = st('lombar', {});
+assert(/dor de costas/.test(E.buildFolheto(s27a, pat('lombar'), E.decide(s27a, pat('lombar')), ORTO).texto),
+  'coluna: alarme de esfíncteres deve aparecer');
+const s27b = st('gonalgia', { tratdur:'lt3' });
+assert(!/dor de costas/.test(E.buildFolheto(s27b, pat('gonalgia'), E.decide(s27b, pat('gonalgia')), ORTO).texto),
+  'joelho: alarme de esfíncteres não deve aparecer');
+const s27c = st('escoliose', {});
+assert(/Na criança: recusa súbita/.test(E.buildFolheto(s27c, pat('escoliose'), E.decide(s27c, pat('escoliose')), ORTO).texto),
+  'infantil: alarme pediátrico deve aparecer');
+
 console.log('OK — todos os testes passaram');

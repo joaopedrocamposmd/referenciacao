@@ -747,13 +747,17 @@ ORTO.anexo1 = {
   ],
 };
 
-// sinais de alarme para o doente (folheto) — conteúdo adicional, fora do documento
+// sinais de alarme para o doente (folheto) — conteúdo adicional, fora do documento;
+// 'visivel' restringe à região em que o alarme faz sentido
 ORTO.alarmeDoente = [
-  'Febre ou arrepios associados à dor.',
-  'Dor intensa em repouso ou durante a noite, que não alivia.',
-  'Perda de força, dormência ou formigueiros de aparecimento recente.',
-  'Incapacidade súbita de mexer ou de apoiar o membro.',
-  'Na dor de costas: dificuldade em urinar/controlar os esfíncteres ou dormência na zona genital — recorra de imediato ao Serviço de Urgência.',
+  { texto:'Febre ou arrepios associados à dor.' },
+  { texto:'Dor intensa em repouso ou durante a noite, que não alivia.' },
+  { texto:'Perda de força, dormência ou formigueiros de aparecimento recente.' },
+  { texto:'Incapacidade súbita de mexer ou de apoiar o membro.' },
+  { texto:'Na dor de costas: dificuldade em urinar/controlar os esfíncteres ou dormência na zona genital — recorra de imediato ao Serviço de Urgência.',
+    visivel: s => s.regiao === 'coluna' },
+  { texto:'Na criança: recusa súbita em andar ou em usar o membro, sobretudo com febre — recorra ao Serviço de Urgência.',
+    visivel: s => s.regiao === 'infantil' },
 ];
 
 /* ---------- helpers de estado ---------- */
@@ -801,7 +805,9 @@ ORTO.buildModules = function () {
     ]},
     { id:'regiao', title:'Região anatómica', navLabel:'R', fields:[
       { id:'regiao', label:'Região', type:'single', density:'buttons',
-        options:ORTO.regioes.map(r => ({ value:r.id, label:r.label })) },
+        options:ORTO.regioes.map(r => ({ value:r.id, label:r.label,
+          // otimização: "Ortopedia Infantil" esconde-se com idade adulta conhecida
+          visivel: r.id === 'infantil' ? (s => s.idade == null || s.idade === '' || +s.idade <= 18) : undefined })) },
     ]},
     { id:'patologia', title:'Patologia', navLabel:'P', fields: patCards },
     { id:'quadro', title:'Quadro clínico', navLabel:'Q', fields: [
@@ -814,11 +820,16 @@ ORTO.buildModules = function () {
     ].concat(quadro)},
     { id:'mcdt', title:'MCDT', navLabel:'M', fields: mcdt },
     { id:'trat', title:'Tratamento prévio', navLabel:'T', fields: trat.concat([
-      // só aparece com ≥1 tratamento efetuado selecionado (sem tratamento, a duração é "nenhum" implícito)
+      // só aparece com ≥1 tratamento efetuado selecionado (sem tratamento, a duração é "nenhum" implícito).
+      // evolução conhecida < 3 meses ⇒ a única resposta possível seria "< 3 meses" → a pergunta não se faz
+      // (o motor deriva 'lt3'); com evolução entre 3–6 meses, a opção "≥ 6 meses" também não é possível.
       { id:'tratdur', label:'Duração do tratamento conservador', type:'single', ordinal:true,
         showIf: s => { const p = ORTO.pat(s); return !!p && p.normalGate === 'padrao'
-          && (!p.tratamento.length || (s['trat_' + p.id] || []).length > 0); },
-        options:[{value:'lt3',label:'< 3 meses'},{value:'m3_6',label:'3–6 meses'},{value:'ge6',label:'≥ 6 meses'}] },
+          && (!p.tratamento.length || (s['trat_' + p.id] || []).length > 0)
+          && !(s.evol != null && s.evol < 13); },
+        options:[{value:'lt3',label:'< 3 meses'},
+                 {value:'m3_6',label:'3–6 meses',visivel:s=>s.evol==null||s.evol>=13},
+                 {value:'ge6',label:'≥ 6 meses',visivel:s=>s.evol==null||s.evol>=26}] },
       { id:'crit_normal', label:'Critérios para referenciação NORMAL', type:'multi', showIf:needTratDur,
         options:[{value:'avd',label:'Queixas limitativas para as AVDs',tone:'ok'},
                  {value:'motivado',label:'Doente aceita e está motivado para tratamento cirúrgico',tone:'ok'}] },

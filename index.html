@@ -84,7 +84,7 @@
     <button class="u-theme-toggle" data-theme-toggle aria-label="Alternar tema"></button>
   </div>
   <h1>Referenciação Ortopedia — ULSM</h1>
-  <p class="subtitle">Critérios e prioridades conforme o Documento de Trabalho Ortopedia ↔ CSP. Ferramenta de apoio — a decisão clínica é do médico.</p>
+  <p class="subtitle">Ferramenta administrativa de apoio à implementação prática do <b>Protocolo de Acesso à Consulta de Ortopedia</b>, desenvolvido pelo Serviço de Ortopedia da ULSM em colaboração com os Cuidados de Saúde Primários. Organiza a informação da consulta e prepara o texto de referenciação segundo o protocolo — <b>não é um sistema de apoio à decisão clínica</b>: a avaliação e a decisão são sempre do médico.</p>
   <div id="orto-nav">
     <div class="cols">
       <div id="orto-collect"><noscript>Esta aplicação precisa de JavaScript.</noscript></div>
@@ -94,7 +94,8 @@
   <footer class="orto-footer">
     <div class="u-alert warn"><div><b>Sinais de alarme — considerar vias rápidas (SU/contacto direto), independentemente do protocolo:</b><br>
       febre ou sinais sistémicos · perda ponderal inexplicada · dor noturna não mecânica ou em repouso · história de neoplasia · défice neurológico de novo ou progressivo · alterações de esfíncteres ou anestesia em sela · trauma major · imunossupressão com dor óssea.</div></div>
-    <p class="disclaimer">Esta aplicação é apenas uma ferramenta administrativa para facilitação da implementação do protocolo de acesso à consulta do Serviço de Ortopedia da ULSM. Todo o conteúdo clínico é da responsabilidade desse Serviço, alheio à UBNIC.</p>
+    <p class="disclaimer">Esta aplicação é apenas uma ferramenta administrativa para facilitação da implementação do protocolo de acesso à consulta do Serviço de Ortopedia da ULSM — não é um dispositivo médico nem um sistema de apoio à decisão clínica. Todo o conteúdo clínico é da responsabilidade desse Serviço, alheio à UBNIC.</p>
+    <p class="disclaimer">Privacidade: a aplicação corre integralmente no navegador, sem servidor próprio (sem backend). Nenhuma informação introduzida é enviada, guardada ou transmitida — os dados existem apenas nesta janela e desaparecem ao fechar ou ao recomeçar.</p>
   </footer>
 </div>
 <div id="orto-print"></div>
@@ -145,23 +146,29 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // opções com 'visivel' (ex.: perda ponderal só se IMC>25; critérios etários): esconde e desmarca
+  // opções com 'visivel' (ex.: perda ponderal só se IMC>25; critérios etários; região infantil
+  // com idade adulta; durações impossíveis face à evolução): esconde e desmarca em TODOS os campos
   function aplicarOpcoesCondicionais(s) {
-    var pat = ORTO.pat(s);
-    if (!pat) return;
-    [['prio_' + pat.id, pat.prioridade], ['trat_' + pat.id, pat.tratamento], ['ach_' + pat.id, pat.doenteTipo]]
-      .forEach(function (par) {
-        var root = document.querySelector('[data-fid="' + par[0] + '"]');
+    stack.getModules().forEach(function (m) {
+      (m.fields || []).forEach(function (f) {
+        if (!f.options || !f.options.some(function (o) { return typeof o.visivel === 'function'; })) return;
+        var root = document.querySelector('[data-fid="' + f.id + '"]');
         if (!root) return;
-        (par[1] || []).forEach(function (o) {
+        f.options.forEach(function (o) {
           if (typeof o.visivel !== 'function') return;
           var inp = root.querySelector('input[value="' + o.value + '"]');
           if (!inp) return;
           var vis = !!o.visivel(s);
-          inp.closest('label').style.display = vis ? '' : 'none';
-          if (!vis && inp.checked) inp.click();   // desmarca pelo caminho real de eventos
+          var lab = inp.closest('label');
+          if (lab) lab.style.display = vis ? '' : 'none';
+          if (!vis && inp.checked) {
+            if (inp.type === 'checkbox') { inp.click(); }              // caminho real de eventos
+            else { inp.checked = false;                                 // radio: click não desmarca
+              inp.dispatchEvent(new CustomEvent('u:change', { bubbles: true })); }
+          }
         });
       });
+    });
   }
 
   // pulse quando a "duração do tratamento conservador" fica ativa (após escolher ≥1 tratamento)

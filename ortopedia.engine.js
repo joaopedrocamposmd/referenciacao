@@ -19,6 +19,13 @@ const NIVEL = {
 function minRank(meses) { return meses >= 6 ? 3 : meses >= 3 ? 2 : 0; }
 // opção com 'visivel' (ex.: perda ponderal só se IMC>25; critérios etários) — invisível não conta nem aparece
 function optVisivel(o, state) { return !o || typeof o.visivel !== 'function' || !!o.visivel(state); }
+// evolução conhecida < 3 meses (13 semanas) ⇒ o conservador não pode ter ≥3 meses: deriva 'lt3'
+// (a pergunta da duração nem se faz nesse caso — ver showIf do tratdur no schema)
+function durEfetiva(state) {
+  if (state.tratdur) return state.tratdur;
+  if (state.evol != null && state.evol < 13) return 'lt3';
+  return 'none';
+}
 
 function decide(state, pat) {
   if (!pat) return { nivel:'incompleto', motivo:'Escolha a região e a patologia.', falta:[], mcdtEmFalta:[], avisos:[] };
@@ -51,7 +58,7 @@ function decide(state, pat) {
   }
   // gate 'padrao': conservador cumprido + achados exigidos + AVD (+ motivado)
   const falta = [];
-  if (DUR_RANK[state.tratdur || 'none'] < minRank(pat.minConservadorMeses || 0))
+  if (DUR_RANK[durEfetiva(state)] < minRank(pat.minConservadorMeses || 0))
     falta.push('Tratamento conservador com duração mínima de ' + pat.minConservadorMeses + ' meses');
   const ach = state['ach_' + pat.id] || [];
   (pat.exigeAchados || []).forEach(a => { if (ach.indexOf(a.value) === -1) falta.push(a.label); });
@@ -139,8 +146,9 @@ function buildText(state, pat, dec, ORTO) {
   // em EMERGENTE o doente segue para o SU — os MCDT do protocolo de consulta deixam de ser exigíveis
   if (dec.mcdtEmFalta.length && dec.nivel !== 'su') L.push('MCDT em falta (protocolo): ' + dec.mcdtEmFalta.join('; ') + '.');
   L.push('');
+  const durTxt = trat.length ? durEfetiva(state) : state.tratdur;   // derivada só faz sentido com tratamento feito
   L.push('TRATAMENTO PRÉVIO: ' + (trat.length ? trat.join('; ') : 'não efetuado')
-    + (state.tratdur ? ' (' + DUR_TXT[state.tratdur] + ')' : '') + '.');
+    + (durTxt && durTxt !== 'none' ? ' (' + DUR_TXT[durTxt] + ')' : '') + '.');
   if (registo) {
     L.push('');
     L.push('AVALIAÇÃO: sem critérios atuais de referenciação a Ortopedia (Documento de Trabalho ULSM).');
@@ -192,7 +200,7 @@ function buildFolheto(state, pat, dec, ORTO) {
   if (dec.nivel !== 'su') {
     L.push('');
     L.push('SINAIS DE ALARME — procure ajuda médica se tiver:');
-    (ORTO.alarmeDoente || []).forEach(a => L.push('• ' + a));
+    (ORTO.alarmeDoente || []).filter(al => optVisivel(al, state)).forEach(al => L.push('• ' + (al.texto || al)));
     L.push('');
     L.push('Se as queixas se agravarem ou persistirem apesar do tratamento, volte a marcar consulta com o seu médico de família.');
   }
