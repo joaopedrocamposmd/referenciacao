@@ -5,7 +5,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="lib/ubnic.css">
 <style>
-  .wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:24px}
+  .wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:24px;
+    min-height:100dvh;box-sizing:border-box;display:flex;flex-direction:column}   /* footer no fundo mesmo com pouco conteúdo */
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
   .brand{display:inline-flex;align-items:center;gap:10px;line-height:0}
   .brand svg{height:30px;width:auto}
@@ -18,7 +19,7 @@
     .cols{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;align-items:start}
     /* width:100% obrigatório: com margin auto, o item de grelha deixa de esticar (shrink-to-fit) */
     #orto-collect{width:100%;max-width:840px;margin-inline:auto}
-    #orto-report{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow-y:auto}
+    #orto-report{position:sticky;top:16px}   /* sem max-height/overflow: a página expande e o scroll é sempre da página */
   }
   /* mobile: cartões a toda a largura; relatório no fim como banda destacada */
   @media(max-width:999px){
@@ -27,7 +28,7 @@
       background:var(--teal-bg);border-top:3px solid var(--teal)}
     #orto-report::before{content:'Resultado';display:block;font-size:11px;font-weight:700;
       text-transform:uppercase;letter-spacing:.8px;color:var(--teal);margin-bottom:2px}
-    .orto-footer{margin-top:0;padding:16px 4px 0;border-top:1px solid var(--bdr)}
+    .orto-footer{padding:16px 4px 0;border-top:1px solid var(--bdr)}
   }
   /* região anatómica em linhas: MS / MI / coluna / infantil
      (a ordem das opções vem de ORTO.regioes; nth-child com grid-column-start:1 abre linha nova) */
@@ -72,7 +73,7 @@
     padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-sans)}
   .orto-tab.on{background:var(--teal);color:#fff;border-color:transparent}
   /* rodapé */
-  .orto-footer{margin-top:28px;display:flex;flex-direction:column;gap:12px}
+  .orto-footer{margin-top:auto;padding-top:28px;display:flex;flex-direction:column;gap:12px}
   .orto-footer .disclaimer{font-size:11.5px;color:var(--t3);line-height:1.5;margin:0}
   /* impressão: só o folheto */
   #orto-print{display:none}
@@ -130,6 +131,8 @@ window.addEventListener('DOMContentLoaded', function () {
     name: 'orto',
     modules: ORTO.buildModules(),
     progressive: true,          // um passo de cada vez; concluídos colapsam com resumo
+    // desktop (relatório ao lado): scroll ancorado ao 1.º cartão; mobile (relatório no fim): pergunta ao topo
+    progressiveScroll: (window.matchMedia && window.matchMedia('(min-width:1000px)').matches) ? 'anchor' : 'step',
     markFindings: true,
     applyDefaults: true,
   });
