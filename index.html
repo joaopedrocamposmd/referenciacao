@@ -120,6 +120,16 @@ window.addEventListener('DOMContentLoaded', function () {
 
   function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
 
+  // idade confirmada < 16 → seleciona logo "Ortopedia Infantil" (o médico pode mudar depois);
+  // usa _done_idade (idade confirmada) para não disparar a meio da escrita, e só se não houver região
+  function autoSelectInfantil(s) {
+    if (s._done_idade !== true || s.regiao || s.idade == null || s.idade === '' || +s.idade >= 16) return false;
+    var inp = document.querySelector('[data-fid="regiao"] input[value="infantil"]');
+    if (!inp || inp.checked) return false;
+    setTimeout(function () { inp.click(); }, 0);
+    return true;
+  }
+
   // ao escolher a região: auto-seleciona a patologia APENAS se for a única dessa região —
   // nunca por faixa etária (um doente de 70 anos no joelho também pode ter uma torção).
   // clique programático no card (não setState): segue o caminho normal de eventos da lib.
@@ -187,8 +197,9 @@ window.addEventListener('DOMContentLoaded', function () {
   function render(e) {
     var s = stack.getState();
     var mudou = e && e.detail ? e.detail.changed : null;
-    // auto-seleção só em resposta ao clique na região (evita disparos a meio de escrever a idade)
-    if (mudou === 'regiao' && autoSelectPat(s)) return; // o setState dispara novo u:stack → re-render
+    // auto-seleções: idade confirmada <16 → região infantil; clique na região → patologia única
+    if (mudou === 'idade' && autoSelectInfantil(s)) return; // o clique dispara novo u:stack → re-render
+    if (mudou === 'regiao' && autoSelectPat(s)) return;
     marcarFaixaEtaria(s);
     aplicarOpcoesCondicionais(s);
     pulseTratdur();
