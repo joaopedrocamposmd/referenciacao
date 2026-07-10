@@ -74,7 +74,7 @@ assert(/direito/i.test(txt.texto.toLowerCase()), 'texto sem lado');
 // 13. sem critérios → texto de registo clínico com plano
 const s13 = st('coifa', { tratdur:'lt3' });
 const t13 = E.buildText(s13, pat('coifa'), E.decide(s13, pat('coifa')), ORTO);
-assert.equal(t13.titulo, 'OMBRO', '1.ª linha deve ser a região');
+assert.equal(t13.titulo, 'OMBRO — SEM CRITÉRIOS DE REFERENCIAÇÃO', '1.ª linha = região + decisão');
 assert(/AVALIAÇÃO: sem critérios/.test(t13.texto), 'devia ser registo clínico (secção AVALIAÇÃO)');
 assert(/PLANO/i.test(t13.texto), 'registo sem plano conservador');
 // 14. gate criterios: dismetria só com chip >1,5 cm
@@ -90,7 +90,7 @@ assert.equal(E.decide(st('dor_protese', { tratdur:'m3_6', crit_normal:['avd'] })
 // 17b. MFR → título de referenciação a MFR
 const s17b = st('capsulite', {});
 const t17b = E.buildText(s17b, pat('capsulite'), E.decide(s17b, pat('capsulite')), ORTO);
-assert.equal(t17b.titulo, 'OMBRO', '1.ª linha deve ser a região (também no MFR)');
+assert.equal(t17b.titulo, 'OMBRO — ORIENTAR PARA MFR (NÃO ORTOPEDIA)', '1.ª linha = região + decisão (MFR)');
 assert(/ORIENTAÇÃO: Iniciar fisioterapia urgente/.test(t17b.texto), 'texto MFR sem orientação');
 // 17. onset em texto: duração 4 meses
 const s17 = st('coifa', { prio_coifa:['rutura_traum'], evol_mode:'duration', evol_dur:4, evol_unit:'months' });
@@ -150,7 +150,7 @@ ORTO.regioes.forEach(r => {
 });
 const s23 = { regiao:'joelho', pat_joelho:'neoformacao', idade:70 };
 const t23 = E.buildText(s23, pat('neoformacao'), E.decide(s23, pat('neoformacao')), ORTO);
-assert.equal(t23.titulo, 'JOELHO', 'neoformação escolhida no joelho → 1.ª linha JOELHO');
+assert(/^JOELHO — NORMAL/.test(t23.titulo), 'neoformação no joelho → 1.ª linha JOELHO — NORMAL: ' + t23.titulo);
 assert(/MOTIVO: Neoformação/.test(t23.texto), 'motivo deve manter a patologia');
 
 // 24. visibilidade condicional por IMC: perda ponderal só se IMC>25 (ou desconhecido)

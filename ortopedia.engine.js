@@ -105,9 +105,9 @@ function buildText(state, pat, dec, ORTO) {
   const evol = evolTxt(state);
 
   const L = [];
-  // 1.ª linha = região (tipologia de consulta da aplicação interna), não a patologia
+  // 1.ª linha = região (tipologia de consulta da aplicação interna) + decisão/prioridade
   const reg = (ORTO.regioes.find(r => r.id === state.regiao) || {}).label;
-  L.push((reg || pat.nome).toUpperCase());
+  L.push(((reg || pat.nome) + ' — ' + NIVEL[dec.nivel].label).toUpperCase());
   L.push('');
   const motivo = [pat.nome,
     pat.lado && state.lado ? 'lado ' + LADO[state.lado] : null,
