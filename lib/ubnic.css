@@ -656,6 +656,8 @@
 .u-pstep.done .u-pstep-body { display: none; }
 .u-pstep-confirm { background: var(--teal); color: #fff; border: none; font-size: 12px; font-weight: 600; padding: 8px 16px; border-radius: var(--r); cursor: pointer; }
 .u-pstep-confirm:hover { background: var(--teal-dark); }
+.u-pstep-confirm:disabled { opacity: .45; cursor: not-allowed; }
+.u-pstep-confirm:disabled:hover { background: var(--teal); }
 .u-pstep-actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 12px; }
 .u-pstep-actions-l { display: flex; gap: 8px; }
 .u-pstep-actions-r { display: flex; gap: 8px; margin-left: auto; }
