@@ -788,7 +788,13 @@ ORTO.buildModules = function () {
       id:'det_' + p.id + '_' + d.id, label:d.label, type:'text', placeholder:d.placeholder,
       showIf: s => ORTO.patId(s) === p.id,
     }));
-    if (p.prioridade.length) quadro.push(per(p, 'prio', { label:'Critérios de prioridade', type:'multi',
+    // título conforme o conteúdo: chips nivel:'normal' são critérios de ENTRADA (referenciação),
+    // os restantes são de prioridade; com mistura, usa o combinado
+    const temNormal = p.prioridade.some(c => c.nivel === 'normal');
+    const temPrio = p.prioridade.some(c => c.nivel !== 'normal');
+    const tituloPrio = temNormal && temPrio ? 'Critérios de referenciação e prioridade'
+                     : temNormal ? 'Critérios de referenciação' : 'Critérios de prioridade';
+    if (p.prioridade.length) quadro.push(per(p, 'prio', { label:tituloPrio, type:'multi',
       // tone = prioridade que o critério desencadeia: SU/MP15 → vermelho, P60 → âmbar, NORMAL → verde
       options:p.prioridade.map(c => ({ value:c.value, label:c.label, desc:c.desc, visivel:c.visivel, finding:true,
         tone:{ su:'critical', mp15:'critical', p60:'warn', normal:'ok' }[c.nivel] })) }));
