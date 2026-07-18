@@ -100,11 +100,11 @@
 .u-fade { animation: u-fadeUp 0.3s ease both; }
 
 /* ---------- Botões ---------- */
-.u-btn, .u-btn-secondary, .u-btn-copy, .u-btn-danger {
-  font-family: var(--font-sans); font-size: 13px; font-weight: 600;
-  padding: 9px 18px; border-radius: var(--r); cursor: pointer;
+.u-btn, .u-btn-secondary, .u-btn-copy, .u-btn-danger, .u-btn-ghost {
+  font-family: var(--font-sans); font-size: 13px; font-weight: 600; line-height: 1.2;
+  box-sizing: border-box; padding: 9px 18px; border-radius: var(--r); cursor: pointer;
   border: 1px solid transparent; transform: translateY(0);
-  transition: all 0.18s ease; display: inline-flex; align-items: center; gap: 6px;
+  transition: all 0.18s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
 }
 .u-btn { background: var(--teal); color: #fff; box-shadow: var(--sh-btn); }
 .u-btn:hover { background: var(--teal-dark); transform: translateY(-1px); box-shadow: var(--sh-btn-hover); }
@@ -112,6 +112,12 @@
 
 .u-btn-secondary { background: transparent; color: var(--teal); border-color: var(--teal-bdr); }
 .u-btn-secondary:hover { background: var(--teal-bg); }
+
+.u-btn-ghost { background: transparent; color: var(--teal); border-color: transparent; box-shadow: none; }
+.u-btn-ghost:hover { background: var(--teal-bg); transform: none; box-shadow: none; }
+
+/* Modificador compacto (aplica-se a qualquer variante) */
+.u-btn-sm { padding: 5px 10px; font-size: 12px; }
 
 .u-btn-danger { background: var(--red); color: #fff; }
 .u-btn-danger:hover { background: var(--red); filter: brightness(0.85); }   /* re-afirma o fundo: um .u-btn.u-btn-danger herdaria o teal-dark do .u-btn:hover (mesma especificidade) */
@@ -129,6 +135,21 @@
   transition: all 0.18s ease; box-shadow: var(--sh-card);
 }
 .u-theme-toggle:hover { transform: scale(1.08); border-color: var(--teal-bdr); color: var(--teal); }
+/* Toggle de idioma — mesma família do toggle de tema (redondo, cross-fade rotativo).
+   <button class="u-lang-toggle" data-langs="en,fr"></button> — o JS preenche os dois códigos. */
+.u-lang-toggle {
+  position: relative; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--bdr);
+  background: var(--s1); color: var(--t2); cursor: pointer;
+  font-family: var(--font-sans); font-size: 10.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: all 0.18s ease; box-shadow: var(--sh-card);
+}
+.u-lang-toggle:hover { transform: scale(1.08); border-color: var(--teal-bdr); color: var(--teal); }
+.u-lang-toggle .u-lang-a, .u-lang-toggle .u-lang-b { position: absolute; display: inline-flex; transition: opacity .3s ease, transform .3s ease; }
+.u-lang-toggle .u-lang-b { opacity: 0; transform: rotate(90deg); }
+.u-lang-toggle.alt .u-lang-a { opacity: 0; transform: rotate(-90deg); }
+.u-lang-toggle.alt .u-lang-b { opacity: 1; transform: rotate(0); }
 /* Ícones sol/lua com cross-fade (sol visível em dark, lua em light) */
 .u-theme-toggle .u-ico-sun, .u-theme-toggle .u-ico-moon { position: absolute; display: inline-flex; transition: opacity .3s ease, transform .3s ease; }
 [data-theme="dark"] .u-theme-toggle .u-ico-sun { opacity: 1; transform: rotate(0); }
@@ -183,6 +204,9 @@
 
 /* ---------- Segmented control ---------- */
 .u-seg { display: inline-flex; align-self: flex-start; align-items: stretch; min-height: 40px; box-sizing: border-box; gap: 4px; background: var(--s2); padding: 2px; border-radius: var(--r); border: 1px solid var(--bdr); flex-wrap: wrap; }
+/* full-width (opt-in): os botões esticam para ocupar a largura toda (ex.: escalas 0-10) */
+.u-seg.u-seg-fill { display: flex; width: 100%; align-self: stretch; }
+.u-seg.u-seg-fill .u-seg-btn { flex: 1 1 0; }
 .u-seg-btn {
   position: relative; cursor: pointer;
   display: inline-flex; align-items: center; justify-content: center; gap: 5px;
@@ -854,8 +878,20 @@
   .u-details-body { break-inside: avoid; }
 }
 
+/* ---------- Sub-painel boxed (genérico) ---------- */
+/* A "caixa cinzenta" sólida do boxedFields, utilizável fora do stack: agrupa
+   sub-blocos dentro de um cartão (ex.: menisco medial vs lateral). */
+.u-box { background: var(--bg); border-radius: var(--r); padding: 14px 16px;
+  box-shadow: inset 0 1px 3px rgba(44,62,80,0.06); }
+[data-theme="dark"] .u-box { box-shadow: inset 0 1px 3px rgba(0,0,0,0.30); }
+.u-box + .u-box { margin-top: 10px; }
+.u-box-title { font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .6px; color: var(--t3); margin-bottom: 8px; }
+
 /* ---- Campo IMC (composto) ---- */
 .u-imc{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+/* variante calculada (sem input direto): IMC como valor, não editável */
+.u-imc-out{font-family:var(--font-mono);font-size:15px;font-weight:700;color:var(--t1);min-width:44px;text-align:right}
 .u-imc-group{display:flex;align-items:center;gap:6px}
 .u-imc-in{width:84px;text-align:right}
 .u-imc-unit{font-family:var(--font-mono);font-size:12px;color:var(--t3)}
@@ -989,3 +1025,555 @@
 .u-multi[data-side="right"] .u-multi-group[data-mirror][data-col="lateral"] .u-chips-row { flex-direction: row-reverse; justify-content: flex-end; }
 .u-multi[data-side="left"]  .u-multi-group[data-mirror][data-col="medial"]  .u-chips-row { flex-direction: row-reverse; justify-content: flex-end; }
 @media (max-width: 560px) { .u-multi-pair { flex-direction: column; } .u-multi-col { padding: 0; } .u-multi[data-side] .u-multi-pair > [data-col] { border-left: none; } .u-multi-pair > [data-col] + [data-col] { border-top: 1px dashed var(--bdr2); padding-top: 10px; margin-top: 6px; } }
+
+/* ============================================================
+   MULTI-VISTA & DADOS (importados do simulador de calendário)
+   modal/confirm · KPI · tabs com estado · legenda · comparação · io
+   ============================================================ */
+
+/* ---------- Modal ---------- */
+.u-modal-backdrop { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px;
+  background: rgba(44,62,80,0.45); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+.u-modal-backdrop.open { display: flex; }
+[data-theme="dark"] .u-modal-backdrop { background: rgba(6,14,22,0.60); }
+.u-modal { background: var(--s3); -webkit-backdrop-filter: blur(var(--blur)); backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--bdr2); border-radius: var(--r2); box-shadow: var(--sh-pop);
+  max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; }
+.u-modal-head { position: relative; padding: 12px 16px; border-bottom: 1px solid var(--bdr); background: var(--s2); flex-shrink: 0; }
+.u-modal-title { display: block; font-size: 13px; font-weight: 700; color: var(--t1); padding-right: 26px; }
+.u-modal-close { position: absolute; top: 8px; right: 10px; width: 26px; height: 26px; border: 0; background: transparent;
+  color: var(--t3); font-size: 18px; line-height: 1; cursor: pointer; border-radius: 6px; }
+.u-modal-close:hover { color: var(--t1); background: var(--s3); }
+.u-modal-body { padding: 16px; overflow-y: auto; }
+.u-modal-foot { padding: 12px 16px; border-top: 1px solid var(--bdr); background: var(--s2); display: flex; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
+/* Confirm (gerado por UBNIC.confirm) — reutiliza o modal; fica acima de tudo */
+.u-confirm-overlay { z-index: 2147483647; }
+.u-confirm { max-width: 420px; }
+.u-confirm-msg { margin: 0; font-size: 13px; line-height: 1.6; color: var(--t1); white-space: pre-line; }
+
+/* ---------- KPI (cartões de estado) ---------- */
+.u-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.u-kpi { padding: 11px 13px; background: var(--s2); border: 1px solid var(--bdr); border-left: 3px solid var(--t4); border-radius: var(--r); }
+.u-kpi.ok   { border-left-color: var(--green); }
+.u-kpi.warn { border-left-color: var(--amber); }
+.u-kpi.err  { border-left-color: var(--red); }
+.u-kpi-label { font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: var(--t3); margin-bottom: 4px; }
+.u-kpi-value { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--t1); line-height: 1.1; }
+.u-kpi-value small { font-size: 11px; font-weight: 500; color: var(--t3); }
+.u-kpi-detail { font-family: var(--font-mono); font-size: 10px; color: var(--t3); margin-top: 3px; }
+.u-kpi.ok .u-kpi-detail   { color: var(--green); }
+.u-kpi.warn .u-kpi-detail { color: var(--amber); }
+.u-kpi.err .u-kpi-detail  { color: var(--red); }
+.u-kpi-wide { grid-column: 1 / -1; }
+.u-kpi-list { display: flex; flex-direction: column; gap: 2px; font-size: 11.5px; color: var(--red); margin-top: 4px; line-height: 1.5; }
+
+/* ---------- Tabs com estado (comutador de cenários/vistas) ---------- */
+/* Acento por tab via --tab-accent (default teal); estado de validação via .warn/.err na tab. */
+.u-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.u-tab { position: relative; overflow: hidden; text-align: left; width: 100%; cursor: pointer;
+  font-family: var(--font-sans); color: var(--t1);
+  background: var(--s1); -webkit-backdrop-filter: blur(var(--blur)); backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--bdr); border-radius: var(--r2); box-shadow: var(--sh-card);
+  padding: 13px 16px; transition: all 0.15s ease; }
+.u-tab:hover { border-color: var(--bdr2); background: var(--s3); }
+.u-tab::after { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: var(--tab-accent, var(--teal)); opacity: 0; transition: opacity 0.15s ease; }
+.u-tab.active { border-color: var(--teal-bdr); box-shadow: var(--sh-teal); }
+.u-tab.active::after { opacity: 1; }
+.u-tab.warn::after { background: var(--amber); }
+.u-tab.err::after  { background: var(--red); }
+.u-tab-letter { display: block; font-size: 30px; font-weight: 300; font-style: italic; line-height: 1;
+  color: var(--tab-accent, var(--teal)); margin-bottom: 2px; }
+.u-tab-name { display: block; font-size: 13.5px; font-weight: 600; line-height: 1.25; margin-bottom: 3px; }
+.u-tab-meta { display: block; font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: .5px; color: var(--t3); line-height: 1.5; }
+.u-tab-status { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--bdr);
+  font-family: var(--font-mono); font-size: 10px; }
+.u-tab-status .item { color: var(--t2); }
+.u-tab-status .item.ok   { color: var(--green); }
+.u-tab-status .item.warn { color: var(--amber); }
+.u-tab-status .item.err  { color: var(--red); }
+.u-tab-status .item strong { font-weight: 700; }
+
+/* ---------- Legenda de cores ---------- */
+.u-legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px 16px; font-size: 12px; }
+.u-legend-item { display: flex; align-items: center; gap: 8px; color: var(--t2); }
+.u-legend-item.u-legend-wide { grid-column: 1 / -1; padding-top: 8px; border-top: 1px dashed var(--bdr); }
+.u-legend-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; padding: 2px 7px;
+  border-radius: 5px; color: #fff; background: var(--t3); font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; flex-shrink: 0; }
+.u-legend-swatch { width: 10px; height: 10px; border-radius: 3px; background: var(--t3); flex-shrink: 0; }
+.u-legend-pill.teal, .u-legend-swatch.teal     { background: var(--teal); }
+.u-legend-pill.green, .u-legend-swatch.green   { background: var(--green); }
+.u-legend-pill.amber, .u-legend-swatch.amber   { background: var(--amber); }
+.u-legend-pill.red, .u-legend-swatch.red       { background: var(--red); }
+.u-legend-pill.purple, .u-legend-swatch.purple { background: var(--purple); }
+.u-legend-pill.cyan, .u-legend-swatch.cyan     { background: var(--cyan); }
+
+/* ---------- Tabela de comparação (modificadores do .u-table) ---------- */
+/* Numérica: valores mono à direita; 1.ª coluna (rótulos) sans à esquerda. Envolver em .u-table-wrap p/ scroll. */
+.u-table-wrap { overflow-x: auto; }
+.u-table.u-cmp th, .u-table.u-cmp td { text-align: right; }
+.u-table.u-cmp th:first-child, .u-table.u-cmp td:first-child { text-align: left; }
+.u-table.u-cmp td { font-family: var(--font-mono); white-space: nowrap; }
+.u-table.u-cmp td:first-child { font-family: var(--font-sans); color: var(--t2); white-space: normal; }
+.u-table.u-cmp th.u-scen { font-family: var(--font-sans); font-style: italic; font-size: 17px; font-weight: 400;
+  text-transform: none; letter-spacing: -0.01em; color: var(--tab-accent, var(--teal)); }
+.u-table tr.u-row-sec td { padding-top: 14px; font-family: var(--font-sans); font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .6px; color: var(--t3); background: var(--s2); border-bottom: 1px solid var(--bdr2); white-space: normal; }
+.u-table tr.u-row-total td { background: var(--s2); font-weight: 600; color: var(--t1); border-top: 1px solid var(--bdr2); border-bottom: 2px solid var(--bdr2); }
+.u-table tr.u-row-total td:first-child { font-family: var(--font-sans); font-style: italic; font-size: 13px; }
+.u-table td.u-best { background: var(--teal-bg); box-shadow: inset 0 0 0 1px var(--teal-bdr); }
+/* deltas numéricos (subir=bom): NÃO confundir com td.pos/.neg clínicos (achado=vermelho) */
+.u-table td.u-up   { color: var(--green); font-weight: 600; }
+.u-table td.u-down { color: var(--red); font-weight: 600; }
+
+/* ---------- Import/Export JSON (gerado por UBNIC.io) ---------- */
+.u-io { display: flex; flex-direction: column; gap: 12px; }
+.u-io-desc { margin: 0; font-size: 12.5px; color: var(--t2); line-height: 1.6; }
+.u-io-row { display: flex; flex-direction: column; gap: 5px; }
+.u-io-row .u-label { margin-bottom: 0; }
+.u-io-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+@media print { .u-modal-backdrop { display: none !important; } }
+
+/* ============================================================
+   SIMULAÇÃO & PARÂMETROS (importados do simulador SINACC)
+   range com pontos de passo · switch · tabela seletora · fórmula
+   ============================================================ */
+
+/* ---------- Range (slider) ---------- */
+.u-range-wrap { position: relative; }
+/* a linha é desenhada pelo wrap (SOB as bolas); o track nativo apaga-se quando há decoração —
+   camadas: linha (::before) < bolas (z1) < input/polegar (z2) → "contas num fio" */
+.u-range-wrap::before { content: ""; position: absolute; top: 50%; left: 8px; right: 8px; height: 4px;
+  border-radius: 2px; background: var(--bdr2); transform: translateY(-50%); }
+.u-range-wrap .u-range::-webkit-slider-runnable-track { background: transparent; }
+.u-range-wrap .u-range::-moz-range-track { background: transparent; }
+.u-range { -webkit-appearance: none; appearance: none; display: block; width: 100%; min-height: 35px;
+  background: transparent; border: none; padding: 0; margin: 0; cursor: pointer; position: relative; z-index: 2; }
+.u-range:focus { outline: none; }
+.u-range::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: var(--bdr2); }
+.u-range::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--teal); margin-top: -6px; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(59,135,123,.45); }
+.u-range::-moz-range-track { height: 4px; border-radius: 2px; background: var(--bdr2); }
+.u-range::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%;
+  background: var(--teal); border: 2px solid #fff; box-shadow: 0 1px 4px rgba(59,135,123,.45); }
+.u-range:focus-visible::-webkit-slider-thumb { box-shadow: var(--focus-ring); }
+.u-range:focus-visible::-moz-range-thumb { box-shadow: var(--focus-ring); }
+[data-theme="dark"] .u-range::-webkit-slider-thumb { border-color: var(--s4); }
+[data-theme="dark"] .u-range::-moz-range-thumb { border-color: var(--s4); }
+/* pontos de passo (UBNIC.rangeDots) — atrás do input, marcam os valores possíveis */
+.u-range-dots { position: absolute; top: 50%; left: 8px; right: 8px; height: 0; pointer-events: none; z-index: 1; }
+.u-range-dots i { position: absolute; top: 0; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--bg); border: 1.5px solid var(--bdr2); box-shadow: 0 1px 2px rgba(44,62,80,.25); transform: translate(-50%,-50%); }
+/* leitura viva no label (mono; anula o uppercase/tracking do .u-label) */
+.u-range-val { font-family: var(--font-mono); font-weight: 600; color: var(--teal); margin-left: 4px;
+  text-transform: none; letter-spacing: 0; }
+
+/* ---------- Switch (on/off) ---------- */
+.u-switch { display: inline-flex; align-items: center; gap: 8px; min-height: 35px; cursor: pointer; user-select: none; position: relative; }
+.u-switch input { position: absolute; opacity: 0; pointer-events: none; }
+.u-sw-track { width: 34px; height: 20px; border-radius: var(--r-pill); background: var(--bdr2); position: relative; transition: background .15s ease; flex: none; }
+.u-sw-track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; transition: left .15s ease; box-shadow: 0 1px 3px rgba(44,62,80,.3); }
+.u-switch:has(input:checked) .u-sw-track { background: var(--teal); }
+.u-switch:has(input:checked) .u-sw-track::after { left: 16px; }
+.u-switch:has(input:focus-visible) .u-sw-track { box-shadow: var(--focus-ring); }
+.u-sw-lbl { font-size: 12px; font-weight: 600; color: var(--t2); line-height: 1.3; }
+.u-switch:has(input:checked) .u-sw-lbl { color: var(--t1); }
+
+/* ---------- Tabela: densidade compacta + linhas selecionáveis + célula editável ---------- */
+.u-table.u-compact th { padding: 5px 8px 4px; }
+.u-table.u-compact td { padding: 3px 8px; font-size: 11.5px; line-height: 1.3; }
+.u-table tr.u-pick { cursor: pointer; }
+.u-table tr.u-pick.on td { background: rgba(59,135,123,0.14); }
+.u-table tr.u-pick.on td:first-child { box-shadow: inset 3px 0 0 var(--teal); }
+[data-theme="dark"] .u-table tr.u-pick.on td { background: rgba(59,135,123,0.22); }
+.u-table .u-cell-edit { width: 80px; min-height: 24px; padding: 2px 6px; font-size: 12px; }
+
+/* ---------- Fluxograma (protocolos / algoritmos de decisão) ---------- */
+/* Nós tonais: texto sempre --t1 (contraste), a família entra na borda + fundo tingido. */
+.u-flow { display: flex; flex-direction: column; align-items: center; }
+.u-flow-node { box-sizing: border-box; width: 100%; max-width: 600px; padding: 12px 16px;
+  border-radius: var(--r); border: 1px solid var(--bdr2); background: var(--s2);
+  text-align: center; font-size: 12.5px; line-height: 1.55; color: var(--t1); }
+.u-flow-node.start    { background: var(--teal); border-color: transparent; color: #fff; font-weight: 600; }
+.u-flow-node.decision { background: var(--amber-bg); border: 2px solid var(--amber); font-weight: 600; }
+.u-flow-node.ok       { background: var(--green-bg); border: 2px solid var(--green); }
+.u-flow-node.critical { background: var(--red-bg);   border: 2px solid var(--red); }
+.u-flow-node.alt      { background: var(--purple-bg); border: 2px solid var(--purple); }
+.u-flow-arrow { width: 2px; height: 22px; background: var(--bdr2); position: relative; }
+.u-flow-arrow::after { content: '▼'; position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%);
+  font-size: 8px; color: var(--t4); }
+/* Bifurcação (sim/não) */
+.u-flow-split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 700px; margin-top: 10px; }
+.u-flow-split-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px;
+  text-align: center; margin-bottom: 6px; }
+.u-flow-split-label.yes { color: var(--green); }
+.u-flow-split-label.no  { color: var(--red); }
+@media (max-width: 560px) { .u-flow-split { grid-template-columns: 1fr; } }
+
+/* ---------- Lista de critérios (✓) ---------- */
+.u-checks { list-style: none; padding: 0; margin: 0; }
+.u-checks li { position: relative; padding: 3px 0 3px 20px; font-size: 12.5px; line-height: 1.55; color: var(--t1); }
+.u-checks li::before { content: '✓'; position: absolute; left: 0; font-weight: 700; color: var(--teal); }
+.u-note.tone-ok .u-checks li::before       { color: var(--green); }
+.u-note.tone-warn .u-checks li::before     { color: var(--amber); }
+.u-note.tone-critical .u-checks li::before { color: var(--red); }
+
+/* ---------- Fórmula (derivação passo-a-passo em tooltips/notas) ---------- */
+.u-vf { white-space: nowrap; }   /* valor + "i" colados (não quebrar entre eles) */
+/* o white-space HERDA: um popover dentro de .u-vf apanharia o nowrap e o texto sairia da caixa */
+.u-info-pop { white-space: normal; }
+.u-info-pop:has(.u-formula) { max-width: 320px; }   /* derivações são compridas — mais folga */
+.u-formula { font-family: var(--font-mono); font-size: 11px; line-height: 1.65; color: var(--t1); }
+.u-formula .u-formula-res { color: var(--teal); font-weight: 700; }
+.u-formula-nota { display: block; margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--bdr);
+  color: var(--t3); font-family: var(--font-sans); }
+
+/* ---------- Painel PROM (questionário colapsável pontuado) ---------- */
+.u-prom { border: 1px solid var(--bdr); border-radius: var(--r); overflow: hidden; margin-bottom: 8px; }
+.u-prom-row { display: flex; align-items: stretch; background: var(--s2); }
+.u-prom-row:hover { background: var(--s3); }
+.u-prom-head { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; box-sizing: border-box;
+  padding: 11px 8px 11px 14px; cursor: pointer; background: transparent; border: 0; text-align: left;
+  font-family: var(--font-sans); font-size: 13px; font-weight: 600; color: var(--t1); }
+.u-prom-name { flex: 1; min-width: 0; }
+/* zona de estado: score (teal) · "não preenchido" (cinza) · "apenas resultado gravado" (âmbar) */
+.u-prom-status, .u-prom-score { font-family: var(--font-mono); font-weight: 700; color: var(--teal); font-size: 12px; white-space: nowrap; }
+.u-prom.is-empty .u-prom-status, .u-prom-status.empty, .u-prom-score.empty { color: var(--t4); font-weight: 500; }
+.u-prom.is-legacy .u-prom-status { color: var(--amber); }
+.u-prom-clear { border: 0; background: transparent; color: var(--t3); cursor: pointer; font-size: 11px;
+  font-family: var(--font-sans); padding: 0 12px; white-space: nowrap; align-self: center; }
+.u-prom-clear:hover { color: var(--teal); }
+/* seta: último elemento da linha → posição fixa à direita de tudo (status, limpar/reverter) */
+.u-prom-chev { align-self: center; color: var(--t4); font-size: 10px; padding: 0 14px 0 4px; transition: transform .15s ease; }
+.u-prom.open .u-prom-chev { transform: rotate(90deg); }
+.u-prom-body { display: none; padding: 12px 14px; }
+.u-prom.open .u-prom-body { display: block; }
+/* pergunta única (ex.: Tegner, SKV): não colapsa — corpo sempre visível; a seta some mas o
+   espaço fica reservado, para o valor no estado ficar na mesma posição dos painéis colapsáveis */
+.u-prom-solo .u-prom-head { cursor: default; }
+.u-prom-solo .u-prom-chev { visibility: hidden; }
+.u-prom-solo .u-prom-body { display: block; }
+.u-prom-warn { font-size: 11.5px; color: var(--amber); background: var(--amber-bg);
+  border: 1px solid var(--amber-bdr); border-radius: var(--r); padding: 8px 10px; margin-bottom: 10px; }
+.u-prom-q { padding: 8px 0; border-bottom: 1px solid var(--bdr); }
+.u-prom-q:last-child { border-bottom: 0; }
+.u-prom-q-label { font-size: 12.5px; color: var(--t1); margin-bottom: 6px; }
+.u-prom-sub { border: 1px solid var(--bdr); border-radius: var(--r); margin: 8px 0; }
+.u-prom-sub-head { display: flex; gap: 8px; align-items: center; padding: 8px 12px; cursor: pointer;
+  background: var(--bg); font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .5px; color: var(--t3); }
+.u-prom-sub-score { margin-left: auto; font-family: var(--font-mono); color: var(--teal); }
+.u-prom-sub-body { display: none; padding: 8px 12px; }
+.u-prom-sub.open .u-prom-sub-body { display: block; }
+.u-prom-legacy { font-size: 11.5px; color: var(--amber); margin-bottom: 8px; }
+
+/* ============================================================
+   APP SHELL & LISTAGENS (importados do registo rACL/santi)
+   shell sidebar+topbar · autocomplete · cabeçalho de tabela
+   ordenável · lista de eventos · nav de secções · pills de
+   <select> · utilitários de página
+   ============================================================ */
+
+/* ---------- App shell (sidebar + topbar) ---------- */
+/* Moldura para apps multi-página:
+   <div class="u-shell">
+     <aside class="u-sidebar"> brand + nav + foot </aside>
+     <div class="u-shell-main"> <header class="u-topbar">…</header> <main>…</main> </div>
+   </div> */
+.u-shell { display: flex; min-height: 100vh; }
+.u-shell-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.u-sidebar {
+  width: 220px; flex-shrink: 0; box-sizing: border-box;
+  background: var(--s1); -webkit-backdrop-filter: blur(var(--blur)); backdrop-filter: blur(var(--blur));
+  border-right: 1px solid var(--bdr);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh;
+}
+.u-sidebar-brand { display: flex; align-items: center; gap: 9px; padding: 16px 18px;
+  border-bottom: 1px solid var(--bdr); color: var(--t1); text-decoration: none; }
+.u-sidebar-brand img, .u-sidebar-brand svg { width: 32px; height: 32px; flex-shrink: 0; }
+.u-sidebar-brand strong { font-size: 15px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
+.u-sidebar-app { display: block; font-size: 9px; font-weight: 600; color: var(--teal);
+  letter-spacing: 0.8px; text-transform: uppercase; }
+.u-sidebar nav { flex: 1; padding: 12px 9px; display: flex; flex-direction: column; gap: 3px; overflow-y: auto; }
+.u-sidebar nav a { display: flex; align-items: center; gap: 9px; padding: 8px 11px; border-radius: var(--r);
+  color: var(--t2); font-weight: 600; font-size: 12.5px; text-decoration: none; transition: all 0.12s ease; }
+.u-sidebar nav a svg { flex-shrink: 0; opacity: 0.75; }
+.u-sidebar nav a:hover { background: var(--s3); color: var(--t1); }
+.u-sidebar nav a.active { background: var(--teal-bg); color: var(--teal); box-shadow: inset 0 0 0 1px var(--teal-bdr); }
+.u-sidebar nav a.active svg { opacity: 1; }
+.u-sidebar-foot { padding: 12px 18px; border-top: 1px solid var(--bdr); display: flex; align-items: center; gap: 9px; }
+.u-sidebar-foot .u-who { flex: 1; font-size: 11.5px; color: var(--t3); overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; }
+.u-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--teal-dark); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 10.5px;
+  flex-shrink: 0; box-shadow: var(--sh-btn); }
+.u-topbar { position: sticky; top: 0; z-index: 40; display: flex; align-items: center; gap: 12px;
+  padding: 10px 22px; background: var(--s1); -webkit-backdrop-filter: blur(var(--blur)); backdrop-filter: blur(var(--blur));
+  border-bottom: 1px solid var(--bdr); }
+.u-topbar-spacer { flex: 1; }
+.u-topbar-search { position: relative; flex: 1; max-width: 420px; }
+.u-topbar-search .u-input { border-radius: var(--r-pill); padding-left: 32px; }
+.u-topbar-ico { position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  pointer-events: none; color: var(--t4); display: inline-flex; }
+/* colapso responsivo: a sidebar vira barra horizontal no topo */
+@media (max-width: 880px) {
+  .u-shell { flex-direction: column; }
+  .u-sidebar { width: 100%; height: auto; position: static; flex-direction: row; align-items: center;
+    border-right: none; border-bottom: 1px solid var(--bdr); }
+  .u-sidebar-brand { border-bottom: none; padding: 8px 14px; }
+  .u-sidebar-app { display: none; }
+  .u-sidebar nav { flex-direction: row; padding: 6px; gap: 2px; overflow-x: auto; overflow-y: visible; }
+  .u-sidebar nav a { padding: 7px 10px; white-space: nowrap; }
+  .u-sidebar nav a svg { display: none; }
+  .u-sidebar-foot { border-top: none; padding: 6px 12px; }
+  .u-sidebar-foot .u-who { display: none; }
+}
+
+/* ---------- Autocomplete (dropdown sob um input; UBNIC.autocomplete) ---------- */
+/* o pai do input recebe .u-ac-host (posicionamento) — o JS trata disso */
+.u-ac-host { position: relative; }
+.u-ac { position: absolute; top: calc(100% + 6px); left: 0; width: 100%; min-width: 260px; z-index: 60;
+  background: var(--s3); -webkit-backdrop-filter: blur(var(--blur)); backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--bdr2); border-radius: var(--r); box-shadow: var(--sh-pop);
+  overflow: hidden; display: none; }
+.u-ac.open { display: block; }
+.u-ac-item { display: block; width: 100%; box-sizing: border-box; text-align: left; padding: 8px 12px;
+  font-family: var(--font-sans); font-size: 12.5px; color: var(--t1); background: transparent; border: 0;
+  border-bottom: 1px solid var(--bdr); cursor: pointer; text-decoration: none; }
+.u-ac-item:last-child { border-bottom: none; }
+.u-ac-item:hover, .u-ac-item.sel { background: var(--teal-bg); }
+.u-ac-meta { display: block; font-size: 10.5px; color: var(--t3); margin-top: 1px; }
+.u-ac-empty { padding: 10px 12px; font-size: 12px; color: var(--t4); }
+
+/* ---------- Cabeçalho de tabela ordenável/filtrável ---------- */
+/* No th: <span class="u-th" data-key="idade">Idade <button class="u-th-btn">⏷</button>
+   <div class="u-th-pop" hidden> .u-th-sort + filtros da app + .u-th-act </div></span>
+   Ordenar dispara u:change {name:'sort', value:{key, dir}} — a app decide o que fazer. */
+.u-th { display: inline-flex; align-items: center; gap: 4px; position: relative; }
+.u-th-arrow { color: var(--teal); font-size: 0.7em; }
+.u-th-btn { border: 1px solid transparent; background: transparent; color: var(--t3); cursor: pointer;
+  border-radius: 6px; padding: 0 4px; line-height: 1.4; font-size: 11px; }
+.u-th-btn:hover { background: var(--s3); border-color: var(--bdr2); color: var(--t1); }
+.u-th-btn.on { color: var(--teal); background: var(--teal-bg); border-color: var(--teal-bdr); }
+.u-th-pop { position: absolute; left: 0; top: calc(100% + 6px); z-index: 60; min-width: 200px; padding: 10px;
+  border-radius: var(--r); background: var(--s3); -webkit-backdrop-filter: blur(var(--blur)); backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--bdr2); box-shadow: var(--sh-pop);
+  display: flex; flex-direction: column; gap: 8px; cursor: default;
+  /* anula a herança do th (uppercase/tracking) */
+  text-transform: none; letter-spacing: normal; font-weight: 400; text-align: left; font-size: 12px; color: var(--t1); }
+.u-th-pop[hidden] { display: none; }
+th:last-child .u-th-pop, .u-th.u-th-right .u-th-pop { left: auto; right: 0; }
+.u-th-sort { display: flex; gap: 5px; }
+.u-th-sort button { flex: 1; border: 1px solid var(--bdr2); background: var(--s2); color: var(--t1);
+  border-radius: var(--r); padding: 5px 6px; cursor: pointer; font-family: var(--font-sans); font-size: 11px; white-space: nowrap; }
+.u-th-sort button:hover { background: var(--teal-bg); border-color: var(--teal-bdr); color: var(--teal); }
+.u-th-act { display: flex; gap: 6px; justify-content: flex-end; }
+
+/* ---------- Lista de eventos (linhas expansíveis — ≠ u-timeline de fases) ---------- */
+.u-evlist { list-style: none; padding: 0; margin: 0; }
+.u-ev { border-bottom: 1px solid var(--bdr); }
+.u-ev:last-child { border-bottom: none; }
+.u-ev-head { display: flex; align-items: baseline; gap: 10px; padding: 8px 8px; cursor: pointer; }
+.u-ev-head:hover { background: var(--s2); }
+.u-ev-date { min-width: 84px; font-family: var(--font-mono); font-size: 11px; color: var(--t3); }
+.u-ev-lbl { flex: 1; font-size: 12.5px; color: var(--t1); }
+.u-ev-chev { color: var(--t4); font-size: 10px; transition: transform 0.15s ease; align-self: center; }
+.u-ev.open { background: var(--teal-bg); border-radius: var(--r); }
+.u-ev.open .u-ev-chev { transform: rotate(90deg); }
+.u-ev-body { display: none; padding: 0 8px 12px 16px; }
+.u-ev.open .u-ev-body { display: block; }
+.u-ev-dl { margin: 6px 0 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 3px 14px; }
+.u-ev-dl > div { display: flex; gap: 6px; align-items: baseline; font-size: 12px; min-width: 0; }
+.u-ev-dl dt { color: var(--t3); font-weight: 600; white-space: nowrap; }
+.u-ev-dl dt::after { content: ":"; }
+.u-ev-dl dd { margin: 0; overflow-wrap: anywhere; color: var(--t1); }
+.u-ev-actions { display: flex; gap: 6px; justify-content: flex-end; }
+
+/* ---------- Nav de secções com scroll-spy (UBNIC.secnav) ---------- */
+/* ponto âmbar = secção ainda por preencher (desaparece com .filled) */
+.u-secnav { position: sticky; top: var(--u-sticky-offset, 0px); z-index: 30;
+  display: flex; gap: 5px; align-items: center; padding: 8px 0; margin-bottom: 12px;
+  background: var(--s1); -webkit-backdrop-filter: blur(var(--blur)); backdrop-filter: blur(var(--blur));
+  border-bottom: 1px solid var(--bdr); overflow-x: auto; scrollbar-width: none; }
+.u-secnav::-webkit-scrollbar { display: none; }
+.u-secnav button { position: relative; font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  padding: 5px 12px; border-radius: var(--r-pill); border: 1.5px solid transparent; background: transparent;
+  color: var(--t3); cursor: pointer; white-space: nowrap; transition: all 0.15s ease; }
+.u-secnav button:hover { border-color: var(--teal-bdr); color: var(--teal); }
+.u-secnav button.current { background: var(--teal); color: #fff; border-color: transparent; }
+.u-secnav-dot { position: absolute; top: 2px; right: 5px; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--amber); display: none; }
+.u-secnav button:not(.filled) .u-secnav-dot { display: block; }
+.u-secnav button.current .u-secnav-dot { background: #fff; }
+/* as secções ancoram abaixo da barra sticky */
+[data-u-sec] { scroll-margin-top: calc(var(--u-sticky-offset, 0px) + 48px); }
+
+/* ---------- Controlos a partir de <select> (UBNIC.control) ---------- */
+/* o select fica acessível mas invisível (sr-only); a UI gerada (pills/seg/buttons/cards) é o controlo */
+select[data-pills], select[data-control] { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); border: 0; }
+.u-pills { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; outline: none; }
+.u-pill-btn { /* mesma métrica do u-chip */
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-sans); font-size: 12px; font-weight: 600; padding: 6px 12px;
+  border-radius: var(--r-pill); border: 1px solid var(--bdr2); background: var(--s2); color: var(--t2);
+  cursor: pointer; user-select: none; transition: all 0.12s ease; white-space: nowrap; }
+.u-pill-btn:hover { border-color: var(--teal-bdr); color: var(--t1); }
+.u-pill-btn.on { background: var(--teal); color: #fff; border-color: transparent; }
+.u-knum { font-family: var(--font-mono); font-size: 9px; opacity: 0.5; border: 1px solid currentColor;
+  border-radius: 4px; padding: 0 3px; line-height: 1.4; }
+.u-pill-btn.on .u-knum { opacity: 0.85; }
+.u-pills:focus-within .u-knum { opacity: 0.85; }
+.u-pill-sub { font-size: 10px; opacity: 0.7; font-weight: 500; }
+.u-pills-more { font-size: 11px; color: var(--t4); white-space: nowrap; padding: 0 4px; }
+.u-pills-search { flex-basis: 100%; max-width: 220px; min-height: 30px; padding: 5px 10px; }
+
+/* ---------- Botão destrutivo em dois tempos (data-arm) ---------- */
+/* armado = vermelho sólido a pulsar, independentemente da variante (ghost/secondary/danger) */
+[data-arm].is-armed { background: var(--red) !important; border-color: transparent !important;
+  color: #fff !important; animation: u-arm 0.9s ease-in-out infinite alternate; }
+@keyframes u-arm { from { box-shadow: 0 0 0 0 rgba(231,76,60,0.35); } to { box-shadow: 0 0 0 5px rgba(231,76,60,0); } }
+
+/* ---------- Utilitários de página ---------- */
+.u-breadcrumb { font-size: 11.5px; color: var(--t4); margin-bottom: 8px; }
+.u-breadcrumb a { color: var(--t3); text-decoration: none; }
+.u-breadcrumb a:hover { color: var(--teal); }
+.u-back { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 600;
+  color: var(--t3); text-decoration: none; margin-bottom: 8px; transition: color 0.12s ease; }
+.u-back::before { content: "←"; }
+.u-back:hover { color: var(--teal); }
+.u-empty { padding: 22px; text-align: center; color: var(--t4); font-size: 12.5px; box-sizing: border-box; }
+.u-kbd { font-family: var(--font-mono); font-size: 10.5px; background: var(--s2); border: 1px solid var(--bdr2);
+  border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; color: var(--t2); }
+
+/* ---------- Datepicker próprio (UBNIC.datepicker) ---------- */
+/* esconde o ícone nativo só onde usamos o calendário próprio (não-touch) */
+@media (pointer: fine) {
+  input[data-datepicker]::-webkit-calendar-picker-indicator { display: none; }
+  input[data-datepicker] { cursor: pointer; }
+}
+.u-dp-host { position: relative; display: block; }
+.u-dp { position: absolute; top: calc(100% + 6px); left: 0; z-index: 70; display: none;
+  width: 264px; box-sizing: border-box; background: var(--s3);
+  -webkit-backdrop-filter: blur(var(--blur)); backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--bdr2); border-radius: var(--r2); box-shadow: var(--sh-pop); padding: 12px; }
+.u-dp.open { display: block; }
+.u-dp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.u-dp-title { font-weight: 700; font-size: 13px; color: var(--t1); text-transform: capitalize; }
+.u-dp-nav { display: flex; gap: 4px; }
+.u-dp-nav button { border: 1px solid var(--bdr); background: var(--s1); color: var(--t2);
+  width: 26px; height: 26px; border-radius: var(--r); cursor: pointer; font-size: 16px; line-height: 1; padding: 0; }
+.u-dp-nav button:hover { border-color: var(--teal-bdr); color: var(--teal); }
+.u-dp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.u-dp-w { text-align: center; font-size: 10px; font-weight: 700; color: var(--t4); padding: 2px 0; }
+.u-dp-days { margin-top: 2px; }
+.u-dp-d { border: 0; background: transparent; color: var(--t1); font-family: var(--font-sans);
+  font-size: 12.5px; height: 30px; border-radius: var(--r); cursor: pointer; padding: 0; }
+.u-dp-d:hover { background: var(--teal-bg); color: var(--teal); }
+.u-dp-d.today { box-shadow: inset 0 0 0 1px var(--teal-bdr); }
+.u-dp-d.sel { background: var(--teal); color: #fff; }
+.u-dp-foot { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--bdr); }
+.u-dp-foot button { border: 0; background: transparent; color: var(--teal); font-weight: 600;
+  font-size: 12px; cursor: pointer; font-family: var(--font-sans); padding: 4px 8px; border-radius: var(--r); }
+.u-dp-foot button:hover { background: var(--teal-bg); }
+
+/* ---------- UBNIC.calendar (mês/semana/dia + recursos) ---------- */
+.u-cal { --cal-gut: 48px; }
+.u-cal-toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.u-cal-nav { display: inline-flex; gap: 4px; }
+.u-cal-btn { border: 1px solid var(--bdr2); background: var(--s1); color: var(--t2);
+  font-family: var(--font-sans); font-size: 12.5px; font-weight: 600; cursor: pointer;
+  padding: 5px 11px; border-radius: var(--r); line-height: 1.2; }
+.u-cal-btn:hover { background: var(--s3); }
+.u-cal-btn.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+.u-cal-title { font-weight: 700; color: var(--t1); font-size: 15px; text-transform: capitalize; flex: 1; }
+.u-cal-viewseg { display: inline-flex; gap: 2px; padding: 3px; background: var(--s2);
+  border: 1px solid var(--bdr); border-radius: var(--r); }
+.u-cal-viewseg .u-cal-btn { border: 0; background: transparent; }
+.u-cal-viewseg .u-cal-btn.active { background: var(--teal); color: #fff; }
+
+/* mês */
+.u-cal-month { border: 1px solid var(--bdr); border-radius: var(--r2); overflow: hidden; background: var(--s1); }
+.u-cal-mhead { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--s2);
+  border-bottom: 1px solid var(--bdr); }
+.u-cal-mhead span { padding: 6px 8px; font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .6px; color: var(--t3); text-align: center; }
+.u-cal-mgrid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(92px, auto); }
+.u-cal-mcell { border-right: 1px solid var(--bdr); border-bottom: 1px solid var(--bdr);
+  padding: 4px; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.u-cal-mcell:nth-child(7n) { border-right: 0; }
+.u-cal-mcell.out { background: var(--s2); }
+.u-cal-mcell.out .u-cal-mday { color: var(--t4); }
+.u-cal-mcell.drop { outline: 2px dashed var(--teal); outline-offset: -2px; background: var(--teal-bg); }
+.u-cal-mday { align-self: flex-end; border: 0; background: none; font-family: var(--font-mono);
+  font-size: 11px; color: var(--t2); cursor: pointer; width: 22px; height: 22px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center; }
+.u-cal-mday:hover { background: var(--s3); }
+.u-cal-mcell.today .u-cal-mday { background: var(--teal); color: #fff; font-weight: 700; }
+.u-cal-chip { border: 0; text-align: left; font-family: var(--font-sans); font-size: 11px;
+  padding: 2px 6px; border-radius: 5px; cursor: pointer; color: var(--t1);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; width: 100%; }
+.u-cal-chip-t { font-family: var(--font-mono); font-size: 10px; color: inherit; opacity: .75; }
+.u-cal-more { border: 0; background: none; font-size: 10.5px; color: var(--t3); cursor: pointer;
+  text-align: left; padding: 1px 6px; }
+.u-cal-more:hover { color: var(--teal); }
+
+/* grelha horária (semana/dia) */
+.u-cal-tg { border: 1px solid var(--bdr); border-radius: var(--r2); overflow: hidden; background: var(--s1); }
+.u-cal-tghead { display: flex; background: var(--s2); border-bottom: 1px solid var(--bdr); }
+.u-cal-tghead .u-cal-gut { flex: 0 0 var(--cal-gut); }
+.u-cal-th { flex: 1; padding: 7px 8px; font-size: 11px; font-weight: 600; color: var(--t2);
+  text-align: center; border-left: 1px solid var(--bdr); min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.u-cal-th b { font-family: var(--font-mono); font-size: 12px; color: var(--t1); }
+.u-cal-tgbody { display: flex; position: relative; }
+.u-cal-tgbody > .u-cal-gut { flex: 0 0 var(--cal-gut); position: relative; }
+.u-cal-tgbody > .u-cal-gut span { position: absolute; right: 6px; transform: translateY(-50%);
+  font-family: var(--font-mono); font-size: 10px; color: var(--t4); }
+.u-cal-col { flex: 1; position: relative; border-left: 1px solid var(--bdr); min-width: 0; }
+.u-cal-col.wkend { background: var(--s2); }
+.u-cal-col.drop { outline: 2px dashed var(--teal); outline-offset: -2px; background: var(--teal-bg); }
+.u-cal-line { position: absolute; left: 0; right: 0; border-top: 1px solid var(--bdr); pointer-events: none; }
+.u-cal-line.half { border-top-style: dotted; opacity: .6; }
+.u-cal-now { position: absolute; left: 0; right: 0; border-top: 2px solid var(--red); z-index: 3; pointer-events: none; }
+.u-cal-now::before { content: ''; position: absolute; left: -1px; top: -4px; width: 7px; height: 7px;
+  border-radius: 50%; background: var(--red); }
+
+/* eventos */
+.u-cal-ev { position: absolute; z-index: 2; border-radius: 6px; padding: 3px 6px 4px;
+  font-size: 11px; line-height: 1.25; cursor: pointer; overflow: hidden; user-select: none;
+  border-left: 3px solid transparent; box-shadow: 0 1px 2px rgba(44, 62, 80, .12); touch-action: none; }
+.u-cal-ev-h { display: block; font-family: var(--font-mono); font-size: 9.5px; opacity: .8; }
+.u-cal-ev-t { display: block; font-weight: 600; color: var(--t1);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.u-cal-ev-s { display: block; font-size: 10px; color: var(--t3);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.u-cal-ev-rs { position: absolute; left: 0; right: 0; bottom: 0; height: 7px; cursor: ns-resize; }
+.u-cal-ev--teal   { background: var(--teal-bg);   border-left-color: var(--teal); }
+.u-cal-ev--slate  { background: var(--s3);        border-left-color: var(--t2); }
+.u-cal-ev--coral  { background: var(--red-bg);    border-left-color: var(--red); }
+.u-cal-ev--amber  { background: var(--amber-bg);  border-left-color: var(--amber); }
+.u-cal-ev--cyan   { background: var(--cyan-bg);   border-left-color: var(--cyan); }
+.u-cal-ev--purple { background: var(--purple-bg); border-left-color: var(--purple); }
+.u-cal-ev--green  { background: var(--green-bg);  border-left-color: var(--green); }
+.u-cal-chip.u-cal-ev--teal   { background: var(--teal-bg); }
+.u-cal-chip.u-cal-ev--slate  { background: var(--s3); }
+.u-cal-chip.u-cal-ev--coral  { background: var(--red-bg); }
+.u-cal-chip.u-cal-ev--amber  { background: var(--amber-bg); }
+.u-cal-chip.u-cal-ev--cyan   { background: var(--cyan-bg); }
+.u-cal-chip.u-cal-ev--purple { background: var(--purple-bg); }
+.u-cal-chip.u-cal-ev--green  { background: var(--green-bg); }
+
+/* arrastar */
+.u-cal-draggable { cursor: grab; touch-action: none; }
+.u-cal-draggable.dragging { opacity: .5; cursor: grabbing; }
+.u-cal-ghost { position: fixed; z-index: 300; pointer-events: none; background: var(--teal);
+  color: #fff; font-size: 12px; font-weight: 600; font-family: var(--font-sans);
+  padding: 5px 10px; border-radius: var(--r); box-shadow: var(--sh-card); max-width: 240px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 880px) {
+  .u-cal-title { order: -1; flex-basis: 100%; }
+}

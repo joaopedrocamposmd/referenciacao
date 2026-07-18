@@ -72,6 +72,41 @@
   .orto-tab{border:1px solid var(--bdr2);background:var(--s2);color:var(--t2);border-radius:8px;
     padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-sans)}
   .orto-tab.on{background:var(--teal);color:#fff;border-color:transparent}
+  /* secção "porquê" (colapsada; deep-link #porque) */
+  .orto-porque{margin-top:26px;background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:14px 16px}
+  .orto-porque > summary{font-size:13px;font-weight:700;color:var(--teal);cursor:pointer;list-style:none}
+  .orto-porque > summary::-webkit-details-marker{display:none}
+  .orto-porque > summary::before{content:'▸ ';font-size:11px}
+  .orto-porque[open] > summary::before{content:'▾ '}
+  .orto-porque-body{padding-top:14px;max-width:900px}
+  .orto-porque h3{font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--t3);
+    margin:22px 0 10px;font-weight:700}
+  .orto-porque p{font-size:13px;color:var(--t2);line-height:1.6;margin:0 0 10px}
+  /* stat tiles (sem gráfico): valor em mono da marca, rótulo em tinta discreta */
+  .orto-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:4px 0 6px}
+  .orto-kpi{background:var(--bg);border:1px solid var(--bdr);border-radius:12px;padding:12px 14px}
+  .orto-kpi-v{font-family:var(--font-mono);font-size:26px;font-weight:600;color:var(--t1);line-height:1.15}
+  .orto-kpi-l{font-size:11.5px;color:var(--t3);line-height:1.4;margin-top:4px}
+  .orto-kpi-src{font-size:10.5px;color:var(--t3);margin:2px 0 0}
+  /* eixos: desafio → resposta → como avaliar */
+  .orto-eixo{background:var(--bg);border:1px solid var(--bdr);border-radius:12px;padding:13px 15px;margin-bottom:10px}
+  .orto-eixo-t{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:8px}
+  .orto-eixo-t span{font-family:var(--font-mono);color:var(--teal);margin-right:6px}
+  .orto-eixo dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 10px;align-items:baseline}
+  .orto-eixo dt{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+    color:var(--t3);white-space:nowrap}
+  .orto-eixo dd{margin:0;font-size:12.5px;color:var(--t2);line-height:1.55}
+  .orto-eixo dd b{color:var(--t1)}
+  .orto-atrito{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+  .orto-atrito div{border-radius:10px;padding:9px 11px;font-size:12px;line-height:1.5}
+  .orto-atrito .antes{background:var(--s2);border:1px solid var(--bdr2);color:var(--t3)}
+  .orto-atrito .agora{background:var(--teal-bg);border:1px solid var(--teal-bdr);color:var(--t1)}
+  .orto-atrito b{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+  @media(max-width:560px){ .orto-atrito{grid-template-columns:1fr} }
+  .orto-porque-nota{font-size:11px;color:var(--t3);line-height:1.5;margin:14px 0 0}
+  .orto-porque-link{font-size:12.5px;color:var(--teal);text-decoration:none;font-weight:600;
+    border-bottom:1px solid var(--teal-bdr)}
+  .orto-porque-link:hover{border-bottom-color:var(--teal)}
   /* rodapé */
   .orto-footer{margin-top:auto;padding-top:28px;display:flex;flex-direction:column;gap:12px}
   .orto-footer .disclaimer{font-size:11.5px;color:var(--t3);line-height:1.5;margin:0}
@@ -101,13 +136,75 @@
     <button class="u-theme-toggle" data-theme-toggle aria-label="Alternar tema"></button>
   </div>
   <h1>Referenciação Ortopedia — ULSM</h1>
-  <p class="subtitle">Ferramenta administrativa de apoio à implementação prática do <b>Protocolo de Acesso à Consulta de Ortopedia</b>, desenvolvido pelo Serviço de Ortopedia da ULSM em colaboração com os Cuidados de Saúde Primários. Organiza a informação da consulta e prepara o texto de referenciação segundo o protocolo — <b>não é um sistema de apoio à decisão clínica</b>: a avaliação e a decisão são sempre do médico.</p>
+  <p class="subtitle">Ferramenta administrativa de apoio à implementação prática do <b>Protocolo de Acesso à Consulta de Ortopedia</b>, desenvolvido pelo Serviço de Ortopedia da ULSM em colaboração com os Cuidados de Saúde Primários. Organiza a informação da consulta e prepara o texto de referenciação segundo o protocolo — <b>não é um sistema de apoio à decisão clínica</b>: a avaliação e a decisão são sempre do médico. <a class="orto-porque-link" href="#porque" data-abrir-porque>Porquê este protocolo?</a></p>
   <div id="orto-nav">
     <div class="cols">
       <div id="orto-collect"><noscript>Esta aplicação precisa de JavaScript.</noscript></div>
       <aside id="orto-report"></aside>
     </div>
   </div>
+  <details class="u-details orto-porque" id="porque">
+    <summary>Porquê este protocolo — e o que esta ferramenta resolve</summary>
+    <div class="u-details-body orto-porque-body">
+      <p>O Protocolo de Acesso à Consulta de Ortopedia nasce de uma constatação simples: com uma equipa dimensionada como a atual, só é possível responder em tempo útil se forem referenciados os utentes que <b>realmente beneficiam</b> de cuidados de Ortopedia — e se cada primeira consulta puder terminar numa decisão.</p>
+
+      <h3>O ponto de partida</h3>
+      <div class="orto-kpis">
+        <div class="orto-kpi"><div class="orto-kpi-v">16</div><div class="orto-kpi-l">especialistas no Serviço</div></div>
+        <div class="orto-kpi"><div class="orto-kpi-v">~100</div><div class="orto-kpi-l">pedidos de consulta por semana</div></div>
+        <div class="orto-kpi"><div class="orto-kpi-v">3–4</div><div class="orto-kpi-l">especialistas com tempo semanal dedicado só a triagem</div></div>
+      </div>
+      <p class="orto-kpi-src">Dados do Serviço de Ortopedia da ULSM. Houve semanas em que a totalidade das primeiras consultas terminou em alta imediata, por não haver indicação para ponderar cirurgia.</p>
+
+      <h3>Três eixos — o desafio e a resposta</h3>
+
+      <div class="orto-eixo">
+        <div class="orto-eixo-t"><span>A</span>Acesso à consulta</div>
+        <dl>
+          <dt>Desafio</dt>
+          <dd>Cada referenciação sem critérios ocupa uma vaga que falta a quem tem indicação. A única forma de responder atempadamente é referenciar apenas quem beneficia dos cuidados de Ortopedia.</dd>
+          <dt>Resposta</dt>
+          <dd>Os critérios do protocolo passam a estar no ponto de decisão, <b>sem criar atrito na consulta</b>: abrir o link e seguir o fluxo.</dd>
+          <dt>Avaliar</dt>
+          <dd>Percentagem de referenciações que cumprem critérios; número de primeiras consultas que terminam em alta imediata.</dd>
+        </dl>
+        <div class="orto-atrito">
+          <div class="antes"><b>Antes</b>Abrir a pasta dos PDFs das várias especialidades → encontrar o ficheiro certo → localizar a página relevante → interpretá-la.</div>
+          <div class="agora"><b>Agora</b>Abrir o link, responder por cliques, obter critérios, prioridade e texto pronto a colar.</div>
+        </div>
+      </div>
+
+      <div class="orto-eixo">
+        <div class="orto-eixo-t"><span>B</span>Aproveitamento da primeira consulta</div>
+        <dl>
+          <dt>Desafio</dt>
+          <dd>Se o doente chega sem ter esgotado o tratamento conservador e sem as imagens dos exames <b>disponíveis</b>, não é possível decidir nessa consulta — duplicam-se os recursos necessários para dar a mesma resposta.</dd>
+          <dt>Resposta</dt>
+          <dd>A ferramenta regista o tratamento conservador efetuado e a sua duração, e devolve a lista de MCDT exigidos pelo protocolo, <b>assinalando os que faltam</b> — permitindo ao hospital realizá-los antes da primeira consulta, sem necessidade de intervenção médica.</dd>
+          <dt>Avaliar</dt>
+          <dd>Percentagem de primeiras consultas com estudo completo e com decisão tomada.</dd>
+        </dl>
+      </div>
+
+      <div class="orto-eixo">
+        <div class="orto-eixo-t"><span>C</span>Recursos dedicados à triagem</div>
+        <dl>
+          <dt>Desafio</dt>
+          <dd>A triagem consome semanalmente tempo de 3 a 4 especialistas, a ler pedidos, distribuir por área e ajustar prioridades.</dd>
+          <dt>Resposta</dt>
+          <dd>O pedido chega com a <b>tipologia de consulta</b> e a <b>prioridade</b> já identificadas, e com os exames em falta assinalados — tornando a triagem praticamente administrativa.</dd>
+          <dt>Avaliar</dt>
+          <dd>Horas semanais de especialista libertadas da triagem para atividade assistencial.</dd>
+        </dl>
+      </div>
+
+      <h3>Horizonte</h3>
+      <p>Com estes três eixos resolvidos, é realista reduzir transversalmente o tempo de espera para consulta num horizonte de dois anos, sem aumento de recursos: a mesma equipa a decidir sobre os doentes certos, à primeira consulta.</p>
+
+      <p class="orto-porque-nota">Esta é uma ferramenta administrativa de apoio à implementação do protocolo — não é um dispositivo médico nem um sistema de apoio à decisão clínica. Todo o conteúdo clínico é da responsabilidade do Serviço de Ortopedia da ULSM. A aplicação corre no navegador, sem servidor: nenhuma informação de doentes é enviada ou guardada.</p>
+    </div>
+  </details>
+
   <footer class="orto-footer">
     <div class="u-alert warn"><div><b>Sinais de alarme — considerar vias rápidas (SU/contacto direto), independentemente do protocolo:</b><br>
       febre ou sinais sistémicos · perda ponderal inexplicada · dor noturna não mecânica ou em repouso · história de neoplasia · défice neurológico de novo ou progressivo · alterações de esfíncteres ou anestesia em sela · trauma major · imunossupressão com dor óssea.</div></div>
@@ -137,6 +234,18 @@ window.addEventListener('DOMContentLoaded', function () {
     applyDefaults: true,
   });
   if (window.ORTO_NOTAS) ORTO_NOTAS.montar();   // painel "Notas clínicas" no fim de cada passo de patologia
+
+  // secção "porquê": deep-link partilhável (…/#porque) e link no cabeçalho
+  var porque = document.getElementById('porque');
+  function abrirPorque(scroll) {
+    if (!porque) return;
+    porque.open = true;
+    if (scroll) setTimeout(function () { porque.scrollIntoView({ behavior:'smooth', block:'start' }); }, 60);
+  }
+  if (location.hash === '#porque') abrirPorque(true);
+  window.addEventListener('hashchange', function () { if (location.hash === '#porque') abrirPorque(true); });
+  var linkPorque = document.querySelector('[data-abrir-porque]');
+  if (linkPorque) linkPorque.addEventListener('click', function () { abrirPorque(true); });
   var panel = document.getElementById('orto-report');
 
   function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
