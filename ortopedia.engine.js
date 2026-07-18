@@ -50,6 +50,9 @@ function decide(state, pat) {
     return Object.assign(base, { nivel:'mfr', motivo:'Iniciar fisioterapia urgente e referenciar a consulta de MFR.' });
   if (pat.normalGate === 'sempre')
     return Object.assign(base, { nivel: pat.nivelSempre || 'normal', motivo:'Referenciar sempre.' });
+  if (pat.normalGate === 'agudo')   // só via emergente: sem critério agudo, mantém-se conservador
+    return Object.assign(base, { nivel:'sem_criterios',
+      motivo:'Sem critério de referenciação urgente — manter tratamento conservador e reavaliar.', falta:[] });
   if (pat.normalGate === 'criterios') {
     const hit = (pat.prioridade || []).find(c => c.nivel === 'normal' && sel.indexOf(c.value) !== -1 && optVisivel(c, state));
     if (hit) return Object.assign(base, { nivel:'normal', motivo:hit.label });
@@ -60,9 +63,8 @@ function decide(state, pat) {
   const falta = [];
   if (DUR_RANK[durEfetiva(state)] < minRank(pat.minConservadorMeses || 0))
     falta.push('Tratamento conservador com duração mínima de ' + pat.minConservadorMeses + ' meses');
-  const ach = state['ach_' + pat.id] || [];
-  (pat.exigeAchados || []).forEach(a => { if (ach.indexOf(a.value) === -1) falta.push(a.label); });
   const crit = state.crit_normal || [];
+  (pat.exigeCrit || []).forEach(a => { if (crit.indexOf(a.value) === -1) falta.push(a.label); });
   if (crit.indexOf('avd') === -1) falta.push('Queixas limitativas para as AVDs');
   if (pat.requerMotivacao !== false && crit.indexOf('motivado') === -1)
     falta.push('Doente aceita e está motivado para tratamento cirúrgico');
@@ -96,12 +98,12 @@ function buildText(state, pat, dec, ORTO) {
   const registo = dec.nivel === 'sem_criterios';
   const sexo = state.sexo === 'm' ? 'masculino' : state.sexo === 'f' ? 'feminino' : null;
   const comorb = lbl(ORTO.comorbilidades.options, (state.comorb || []).filter(c => c !== 'none'));
-  const ach = lbl(pat.doenteTipo, state['ach_' + pat.id]);
   const prio = lbl((pat.prioridade || []).filter(o => optVisivel(o, state)), state['prio_' + pat.id]);
   const mcdt = lbl(pat.mcdt, state['mcdt_' + pat.id]);
   const trat = lbl((pat.tratamento || []).filter(o => optVisivel(o, state)), state['trat_' + pat.id]);
   const crit = lbl([{value:'avd',label:'queixas limitativas para as AVDs'},
-                    {value:'motivado',label:'doente aceita e está motivado para tratamento cirúrgico'}], state.crit_normal);
+                    {value:'motivado',label:'doente aceita e está motivado para tratamento cirúrgico'},
+                    {value:'hueston',label:'teste de Hueston positivo'}], state.crit_normal);
   const evol = evolTxt(state);
 
   const L = [];
@@ -131,9 +133,10 @@ function buildText(state, pat, dec, ORTO) {
   const det = (pat.detalhes || [])
     .map(d => ({ label:d.label, v: state['det_' + pat.id + '_' + d.id] }))
     .filter(x => x.v != null && x.v !== '');
-  if (ach.length || det.length) {
+  const func = state.func;
+  if (func || det.length) {
     L.push('');
-    if (ach.length) L.push('QUADRO CLÍNICO: ' + ach.join('; ') + '.');
+    if (func) L.push('QUADRO CLÍNICO — funcionalidade e grau de incapacidade: ' + func + '.');
     det.forEach(x => L.push(x.label + ': ' + x.v + '.'));
   }
   if (prio.length || crit.length) {

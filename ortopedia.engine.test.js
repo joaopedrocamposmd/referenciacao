@@ -10,7 +10,7 @@ ORTO.patologias.forEach(p => {
   assert(p.transversal === true || ORTO.regioes.some(r => r.id === p.regiao), p.id + ': região inválida');
   ['nome','cardDesc','doenteTipo','prioridade','mcdt','tratamento','normalGate'].forEach(k =>
     assert(p[k] !== undefined, p.id + ' sem ' + k));
-  assert(['padrao','criterios','sempre','mfr'].includes(p.normalGate), p.id + ': normalGate inválido');
+  assert(['padrao','criterios','sempre','mfr','agudo'].includes(p.normalGate), p.id + ': normalGate inválido');
   p.prioridade.forEach(c => assert(['su','mp15','p60','normal'].includes(c.nivel), p.id + '/' + c.value + ': nivel inválido'));
   if (p.normalGate === 'criterios')
     assert(p.prioridade.some(c => c.nivel === 'normal'), p.id + ': gate criterios sem chips nivel normal');
@@ -23,6 +23,15 @@ ORTO.patologias.forEach(p => {
     p[k].forEach(o => { assert(!seen.has(o.value), p.id + '/' + k + ': valor duplicado ' + o.value); seen.add(o.value); });
   });
 });
+
+// doente tipo do protocolo alimenta a descrição do cartão (não é escolha múltipla)
+ORTO.patologias.forEach(p => {
+  if (p.doenteTipo && p.doenteTipo.length)
+    assert.equal(p.cardDesc, p.doenteTipo.map(o => o.label).join(' · '), p.id + ': cardDesc não é o doente tipo');
+});
+const modsD = ORTO.buildModules();
+assert(!modsD.find(m => m.id === 'quadro').fields.some(f => f.id.indexOf('ach_') === 0),
+  'não deve existir campo de achados (doente tipo)');
 
 // faixa etária típica: presente e coerente em todas
 ORTO.patologias.forEach(p => {
@@ -43,8 +52,8 @@ const pat = id => ORTO.patologias.find(x => x.id === id);
 assert.equal(E.decide(st('tend_calc', { prio_tend_calc:['hiperalgica'] }), pat('tend_calc')).nivel, 'su');
 // 2. MFR: tendinite calcificante sem critério emergente
 assert.equal(E.decide(st('tend_calc', {}), pat('tend_calc')).nivel, 'mfr');
-// 3. MP15: coifa com rutura traumática aguda
-assert.equal(E.decide(st('coifa', { prio_coifa:['rutura_traum'] }), pat('coifa')).nivel, 'mp15');
+// 3. SU: coifa com rutura traumática aguda (protocolo revisto)
+assert.equal(E.decide(st('coifa', { prio_coifa:['rutura_traum'] }), pat('coifa')).nivel, 'su');
 // 4. P60: coifa jovem desportista
 assert.equal(E.decide(st('coifa', { prio_coifa:['jovem_desp'] }), pat('coifa')).nivel, 'p60');
 // 5. NORMAL: coifa com conservador ≥6m + AVD + motivado
@@ -57,8 +66,8 @@ assert(d6.falta.some(f => f.indexOf('6') !== -1), 'falta deve citar mínimo 6 me
 assert.equal(E.decide(st('displasia_anca', {}), pat('displasia_anca')).nivel, 'mp15');
 // 8. incompleto: sem patologia
 assert.equal(E.decide({ regiao:'ombro' }, null).nivel, 'incompleto');
-// 9. cascata: SU ganha a MP15 (lombar com défice + dúvida)
-assert.equal(E.decide(st('lombar', { prio_lombar:['defice_neuro','duvida_defice'] }), pat('lombar')).nivel, 'su');
+// 9. cascata: SU ganha a P60 (lombar com défice súbito + evolução progressiva)
+assert.equal(E.decide(st('lombar', { prio_lombar:['defice_neuro','progressiva'] }), pat('lombar')).nivel, 'su');
 // 10. MCDT em falta sinalizados
 const dm = E.decide(st('coifa', { tratdur:'ge6', crit_normal:['avd','motivado'], mcdt_coifa:['rx_ombro'] }), pat('coifa'));
 assert(dm.mcdtEmFalta.length === 1 && dm.mcdtEmFalta[0].indexOf('Ecografia') !== -1, 'eco em falta');
@@ -68,7 +77,7 @@ assert(E.decide(st('displasia_anca', { idade:40 }), pat('displasia_anca')).aviso
 const s12 = st('coifa', { prio_coifa:['rutura_traum'], lado:'dto' });
 const dec12 = E.decide(s12, pat('coifa'));
 const txt = E.buildText(s12, pat('coifa'), dec12, ORTO);
-assert(/MUITO PRIORIT/i.test(txt.texto), 'texto sem prioridade');
+assert(/EMERGENTE/i.test(txt.texto), 'texto sem prioridade');
 assert(/coifa/i.test(txt.texto), 'texto sem patologia');
 assert(/direito/i.test(txt.texto.toLowerCase()), 'texto sem lado');
 // 13. sem critérios → texto de registo clínico com plano
@@ -80,11 +89,11 @@ assert(/PLANO/i.test(t13.texto), 'registo sem plano conservador');
 // 14. gate criterios: dismetria só com chip >1,5 cm
 assert.equal(E.decide(st('dismetria', {}), pat('dismetria')).nivel, 'sem_criterios');
 assert.equal(E.decide(st('dismetria', { prio_dismetria:['maior15'] }), pat('dismetria')).nivel, 'normal');
-// 15. exigeAchados: Dupuytren sem Hueston não é NORMAL; com Hueston + AVD + motivado é
+// 15. exigeCrit: Dupuytren sem Hueston não é NORMAL; com Hueston + AVD + motivado é
 const dDup1 = E.decide(st('dupuytren', { crit_normal:['avd','motivado'] }), pat('dupuytren'));
 assert.equal(dDup1.nivel, 'sem_criterios');
 assert(dDup1.falta.some(f => /hueston/i.test(f)), 'falta deve citar Hueston');
-assert.equal(E.decide(st('dupuytren', { ach_dupuytren:['hueston'], crit_normal:['avd','motivado'] }), pat('dupuytren')).nivel, 'normal');
+assert.equal(E.decide(st('dupuytren', { crit_normal:['avd','motivado','hueston'] }), pat('dupuytren')).nivel, 'normal');
 // 16. prótese: sem motivado (requerMotivacao:false) — conservador + AVD chega
 assert.equal(E.decide(st('dor_protese', { tratdur:'m3_6', crit_normal:['avd'] }), pat('dor_protese')).nivel, 'normal');
 // 17b. MFR → título de referenciação a MFR
@@ -111,6 +120,12 @@ assert(/Ritmo de crescimento: estável há 2 anos\./.test(t19.texto), 'detalhe c
 ORTO.patologias.forEach(p => assert(p.leigo && p.leigo.length > 10, p.id + ': sem explicação leiga'));
 ORTO.patologias.forEach(p => (p.tratamento || []).forEach(t =>
   assert(ORTO.tratamentoLeigo[t.value], p.id + '/' + t.value + ': tratamento sem versão leiga')));
+// 19b. funcionalidade e grau de incapacidade (item (2) da História Clínica) no relatório
+const s19b = st('gonalgia', { func:'marcha limitada a 200 m; sobe escadas com apoio' });
+const t19b = E.buildText(s19b, pat('gonalgia'), E.decide(s19b, pat('gonalgia')), ORTO);
+assert(/QUADRO CLÍNICO — funcionalidade e grau de incapacidade: marcha limitada a 200 m; sobe escadas com apoio\./.test(t19b.texto),
+  'linha de funcionalidade em falta: ' + (t19b.texto.match(/QUADRO.*/) || ''));
+
 // 20. fasceíte sem critérios → plano conservador + exercícios do Anexo 1
 const s20 = st('fasceite', { trat_fasceite:['aines'], tratdur:'lt3' });
 const f20 = E.buildFolheto(s20, pat('fasceite'), E.decide(s20, pat('fasceite')), ORTO);
@@ -118,9 +133,9 @@ assert(/tratamento indicado é conservador/.test(f20.texto), 'intro conservador 
 assert(/EXERCÍCIOS DIÁRIOS/i.test(f20.texto) && /toalha/.test(f20.texto), 'exercícios do Anexo 1 em falta');
 assert(/pelo menos 6 meses/.test(f20.texto), 'duração mínima em falta no folheto');
 assert(/SINAIS DE ALARME/.test(f20.texto), 'sinais de alarme em falta');
-// 21. coifa MP15 → intro "muito prioritário"; SU → só urgência, sem plano
-const s21 = st('coifa', { prio_coifa:['rutura_traum'] });
-assert(/muito prioritário/.test(E.buildFolheto(s21, pat('coifa'), E.decide(s21, pat('coifa')), ORTO).texto));
+// 21. displasia MP15 → intro "muito prioritário"; SU → só urgência, sem plano
+const s21 = st('displasia_anca', {});
+assert(/muito prioritário/.test(E.buildFolheto(s21, pat('displasia_anca'), E.decide(s21, pat('displasia_anca')), ORTO).texto));
 const s21b = st('tend_calc', { prio_tend_calc:['hiperalgica'] });
 const f21b = E.buildFolheto(s21b, pat('tend_calc'), E.decide(s21b, pat('tend_calc')), ORTO);
 assert(/Serviço de Urgência/.test(f21b.texto) && !/Fisioterapia\./.test(f21b.texto), 'SU não deve ter plano conservador');
@@ -136,8 +151,8 @@ assert.equal(d22.nivel, 'su');
 assert(d22.mcdtEmFalta.length > 0, 'cenário devia ter MCDT em falta');
 assert(!/MCDT em falta/.test(E.buildText(s22, pat('tend_calc'), d22, ORTO).texto), 'EMERGENTE não deve listar MCDT em falta');
 // …mas nos restantes níveis continua a aparecer
-const s22b = st('coifa', { prio_coifa:['rutura_traum'] });
-assert(/MCDT em falta/.test(E.buildText(s22b, pat('coifa'), E.decide(s22b, pat('coifa')), ORTO).texto), 'MP15 deve manter MCDT em falta');
+const s22b = st('coifa', { prio_coifa:['jovem_desp'] });
+assert(/MCDT em falta/.test(E.buildText(s22b, pat('coifa'), E.decide(s22b, pat('coifa')), ORTO).texto), 'P60 deve manter MCDT em falta');
 
 // 23. transversais: últimas 2 opções de TODAS as regiões; 1.ª linha do texto = região escolhida
 const mods = ORTO.buildModules();
@@ -193,5 +208,35 @@ assert(!/dor de costas/.test(E.buildFolheto(s27b, pat('gonalgia'), E.decide(s27b
 const s27c = st('escoliose', {});
 assert(/Na criança: recusa súbita/.test(E.buildFolheto(s27c, pat('escoliose'), E.decide(s27c, pat('escoliose')), ORTO).texto),
   'infantil: alarme pediátrico deve aparecer');
+
+// 28. PROTOCOLO REVISTO (Critérios referenciação.docx)
+// coifa: rutura traumática aguda passou a EMERGENTE
+assert.equal(E.decide(st('coifa', { prio_coifa:['rutura_traum'] }), pat('coifa')).nivel, 'su',
+  'coifa: rutura traumática deve ser SU no protocolo revisto');
+// coluna: sem escalão de 15 dias; fratura em RX/TAC e cauda equina são SU
+['cervical','lombar'].forEach(id => {
+  const p = pat(id);
+  assert(!p.prioridade.some(c => c.nivel === 'mp15'), id + ': não deve ter chips MP15');
+  assert.equal(p.minConservadorMeses, 3, id + ': duração mínima passou a 3 meses');
+  assert(p.prioridade.some(c => c.value === 'fratura_rx' && c.nivel === 'su'), id + ': falta fratura em RX/TAC (SU)');
+});
+assert(pat('lombar').prioridade.some(c => c.value === 'cauda_equina' && c.nivel === 'su'), 'lombar: falta cauda equina (SU)');
+assert.equal(pat('lombar').nome, 'Dor lombar/dorsolombar');
+assert.equal(E.decide(st('lombar', { prio_lombar:['cauda_equina'] }), pat('lombar')).nivel, 'su');
+// fratura osteoporótica removida do protocolo
+assert(!ORTO.patologias.some(p => p.id === 'fratura_osteop'), 'fratura osteoporótica deve sair do schema');
+// patologias novas da anca
+const cs = pat('coxalgia_subita'), dl = pat('dor_lateral_coxa');
+assert(cs && cs.regiao === 'anca' && cs.normalGate === 'agudo', 'coxalgia súbita em falta/gate errado');
+assert.equal(E.decide(st('coxalgia_subita', { prio_coxalgia_subita:['dor_subita'] }), cs).nivel, 'su');
+const dAg = E.decide(st('coxalgia_subita', {}), cs);
+assert.equal(dAg.nivel, 'sem_criterios', 'sem critério agudo → conservador');
+assert.equal(dAg.falta.length, 0, 'gate agudo não lista critérios NORMAL em falta');
+assert(dl && dl.regiao === 'anca' && dl.normalGate === 'padrao' && dl.minConservadorMeses === 3, 'dor lateral da coxa em falta/config errada');
+assert.equal(E.decide(st('dor_lateral_coxa', { tratdur:'m3_6', crit_normal:['avd','motivado'] }), dl).nivel, 'normal');
+// coxalgia do adulto jovem: achado "ressalto" saiu do doente tipo
+assert(!pat('coxalgia_jovem').doenteTipo.some(o => o.value === 'ressalto'), 'ressalto deve sair do doente tipo');
+// dismetria: nota de vigilância substitui "referenciar sempre"
+assert(pat('dismetria').notas.some(n => /Vigilância se não cumprir/.test(n)), 'dismetria: nota revista em falta');
 
 console.log('OK — todos os testes passaram');

@@ -158,12 +158,14 @@ const NOTAS = {
     ],
   },
   anca: {
-    intro: 'Dor inguinal é anca até prova em contrário; a rotação interna passiva limitada e dolorosa é o sinal mais precoce de coxartrose.',
+    intro: 'A LOCALIZAÇÃO separa as entidades: dor inguinal = articulação (coxartrose, conflito femoroacetabular); dor lateral/trocantérica = tendinopatia glútea; dor súbita na coxa após esforço = lesão musculotendinosa.',
     manobras: [
       { nome:'FADIR', como:'Flexão 90° + adução + rotação interna passivas.', positivo:'Dor inguinal → conflito femoroacetabular/labrum (jovem).' },
       { nome:'FABER (Patrick)', como:'Figura-de-4: flexão + abdução + rotação externa.', positivo:'Dor inguinal → anca; dor posterior → sacroilíaca.' },
       { nome:'Rotação interna passiva', como:'Decúbito dorsal, anca e joelho a 90°; rodar internamente.', positivo:'Limitação e dor → coxartrose precoce.' },
-      { nome:'Distinção com a coluna', como:'Dor glútea com irradiação abaixo do joelho e Lasègue positivo.', positivo:'Radiculopatia lombar, não anca; dor lateral à palpação do trocânter → peritrocantérica.' },
+      { nome:'Palpação do grande trocânter', como:'Decúbito lateral sobre o lado são; palpar a proeminência trocantérica.', positivo:'Dor exquisita reproduzida → síndrome dolorosa peritrocantérica (tendinopatia glútea) — a "dor na face lateral da coxa/anca" do protocolo.' },
+      { nome:'Lesão musculotendinosa aguda', como:'Após esforço súbito: procurar equimose extensa na face anterior (reto femoral) ou posterior (isquiotibiais) da coxa; testar a marcha.', positivo:'Equimose de grandes dimensões + impotência funcional → critério EMERGENTE do protocolo (ecografia).' },
+      { nome:'Distinção com a coluna', como:'Dor glútea com irradiação abaixo do joelho e Lasègue positivo.', positivo:'Radiculopatia lombar, não anca.' },
     ],
   },
   joelho: {

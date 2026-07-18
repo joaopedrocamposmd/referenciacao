@@ -85,8 +85,9 @@
   .orto-porque{margin-top:26px;background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:14px 16px}
   .orto-porque > summary{font-size:13px;font-weight:700;color:var(--teal);cursor:pointer;list-style:none}
   .orto-porque > summary::-webkit-details-marker{display:none}
-  .orto-porque > summary::before{content:'▸ ';font-size:11px}
-  .orto-porque[open] > summary::before{content:'▾ '}
+  .orto-porque > summary::before{content:'▸';font-size:15px;display:inline-block;width:16px;
+    transition:transform .15s ease}
+  .orto-porque[open] > summary::before{transform:rotate(90deg)}
   .orto-porque-body{padding-top:14px;max-width:900px}
   .orto-porque h3{font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--t3);
     margin:22px 0 10px;font-weight:700}
