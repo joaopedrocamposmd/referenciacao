@@ -67,6 +67,15 @@
   #orto-texto,#orto-folheto{background:var(--s1);border:1px solid var(--bdr);border-radius:12px;padding:14px;
     font-family:var(--font-mono);font-size:12px;line-height:1.55;color:var(--t1);
     white-space:pre-wrap;word-break:break-word;margin:0}
+  /* destino RSE-SIGA + contador de caracteres (limite 1800 por campo) */
+  .orto-destino{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    font-size:11.5px;color:var(--t3);line-height:1.4}
+  .orto-destino b{color:var(--t2)}
+  .orto-chars{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--t3);white-space:nowrap}
+  .orto-chars.perto{color:var(--amber)}
+  .orto-chars.excede{color:var(--red)}
+  .orto-destino-hint{font-size:11px;color:var(--t3);line-height:1.45;margin:0}
+  .orto-destino-hint b{color:var(--t2)}
   /* tabs do painel (referenciação | folheto) */
   .orto-tabs{display:flex;gap:6px}
   .orto-tab{border:1px solid var(--bdr2);background:var(--s2);color:var(--t2);border-radius:8px;
@@ -198,6 +207,14 @@
         </dl>
       </div>
 
+      <h3>Como se articula com o RSE-SIGA</h3>
+      <p>A referenciação é sempre feita pela aplicação <b>RSE-SIGA</b> — esta ferramenta não a substitui nem comunica com ela: prepara o texto para o médico colar. O RSE-SIGA disponibiliza dois campos de 1800 caracteres:</p>
+      <div class="orto-atrito">
+        <div class="agora"><b>Motivo de Referenciação Resumido</b>O texto gerado por esta aplicação: motivo, prioridade proposta, história estruturada, MCDT realizados e em falta, tratamento prévio.</div>
+        <div class="antes"><b>História Clínica</b>Resultados de exames e outra informação que o médico considere relevante.</div>
+      </div>
+      <p style="margin-top:10px">Como o texto sai sempre com a <b>mesma estrutura</b>, abre duas automatizações do lado hospitalar, sem trabalho adicional para os CSP: triagem automática por tipologia e prioridade, e pedido automático dos <b>exames de imagem em falta</b> — para que estejam disponíveis à data da primeira consulta.</p>
+
       <h3>Horizonte</h3>
       <p>Com estes três eixos resolvidos, é realista reduzir transversalmente o tempo de espera para consulta num horizonte de dois anos, sem aumento de recursos: a mesma equipa a decidir sobre os doentes certos, à primeira consulta.</p>
 
@@ -208,7 +225,7 @@
   <footer class="orto-footer">
     <div class="u-alert warn"><div><b>Sinais de alarme — considerar vias rápidas (SU/contacto direto), independentemente do protocolo:</b><br>
       febre ou sinais sistémicos · perda ponderal inexplicada · dor noturna não mecânica ou em repouso · história de neoplasia · défice neurológico de novo ou progressivo · alterações de esfíncteres ou anestesia em sela · trauma major · imunossupressão com dor óssea.</div></div>
-    <p class="disclaimer">Esta aplicação é apenas uma ferramenta administrativa para facilitação da implementação do protocolo de acesso à consulta do Serviço de Ortopedia da ULSM — não é um dispositivo médico nem um sistema de apoio à decisão clínica. Todo o conteúdo clínico é da responsabilidade desse Serviço, alheio à UBNIC.</p>
+    <p class="disclaimer">Esta aplicação é apenas uma ferramenta administrativa para facilitação da implementação do protocolo de acesso à consulta do Serviço de Ortopedia da ULSM — não é um dispositivo médico nem um sistema de apoio à decisão clínica. Todo o conteúdo clínico é da responsabilidade desse Serviço, alheio à UBNIC. A referenciação é efetuada na aplicação <b>RSE-SIGA</b>: esta ferramenta apenas prepara o texto a colar nos respetivos campos.</p>
     <p class="disclaimer">Privacidade: a aplicação corre integralmente no navegador, sem servidor próprio (sem backend). Nenhuma informação introduzida é enviada, guardada ou transmitida — os dados existem apenas nesta janela e desaparecem ao fechar ou ao recomeçar.</p>
   </footer>
 </div>
@@ -350,10 +367,18 @@ window.addEventListener('DOMContentLoaded', function () {
            '<button class="orto-tab' + (aba === 'ref' ? ' on' : '') + '" data-orto-aba="ref">Referenciação</button>' +
            '<button class="orto-tab' + (aba === 'fol' ? ' on' : '') + '" data-orto-aba="fol">Folheto doente</button></div>';
       if (aba === 'ref') {
+        // RSE-SIGA: campo de destino e limite de 1800 caracteres
+        var nch = out.texto.length;
+        var estadoCh = nch > 1800 ? 'excede' : (nch > 1600 ? 'perto' : '');
+        h += '<div class="orto-destino"><span>Colar em <b>Motivo de Referenciação Resumido</b> (RSE-SIGA)</span>' +
+             '<span class="orto-chars ' + estadoCh + '">' + nch + ' / 1800</span></div>';
         h += '<pre class="u-mono" id="orto-texto">' + esc(out.texto) + '</pre>';
+        if (nch > 1800)
+          h += '<div class="u-alert warn"><div>O texto excede o limite de 1800 caracteres do campo. Encurte os campos de texto livre (detalhes) antes de copiar.</div></div>';
         h += '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
              '<button class="u-btn u-btn-copy" data-copy="#orto-texto">Copiar texto</button>' +
              '<button class="u-btn u-btn-secondary" data-orto-reset>Recomeçar</button></div>';
+        h += '<p class="orto-destino-hint">No campo <b>História Clínica</b> do RSE-SIGA: resultados de exames e outra informação que considere relevante (também até 1800 caracteres).</p>';
       } else {
         h += '<pre class="u-mono" id="orto-folheto">' + esc(fol.texto) + '</pre>';
         h += '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
