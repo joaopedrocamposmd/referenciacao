@@ -235,7 +235,7 @@ const ORTO = {
                  {value:'gelo',label:'Gelo'},
                  {value:'canadianas',label:'Canadianas'} ],
     idade:null,
-    notas:['A duração mínima do tratamento conservador não consta do documento revisto (linha truncada) — confirmar com o Serviço.'] },
+    notas:['Sem duração mínima de tratamento conservador: perante o quadro agudo, a orientação é o Serviço de Urgência.'] },
 
   { id:'dor_lateral_coxa', regiao:'anca', nome:'Dor na face lateral da coxa / anca', lado:true,
     doenteTipo:[
